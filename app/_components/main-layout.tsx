@@ -12,6 +12,7 @@ import {
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 
 import { classNames } from '../_utils/styles'
+import Link from "next/link";
 const navigation = [
     { name: 'Marketplace', href: '#', icon: HomeIcon, current: true },
     { name: 'Favourite', href: '#', icon: StarIcon, current: false },
@@ -90,9 +91,9 @@ export default function MainLayout({
                                 {/* Sidebar component*/}
                                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                                     <div className="flex h-16 shrink-0 items-center">
-                                        <h1 className="text-5xs font-bold text-indigo-800">
-                                            UW Trade
-                                        </h1>
+                                        <span className="text-5xs font-bold text-indigo-800">
+                                            <Link href="/">UW Trade</Link>
+                                        </span>
                                     </div>
                                     <nav className="flex flex-1 flex-col">
                                         <ul
@@ -165,9 +166,9 @@ export default function MainLayout({
                 {/* Sidebar component*/}
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
                     <div className="flex h-16 shrink-0 items-center">
-                        <h1 className="text-5xs font-bold text-indigo-800">
-                            UW Trade
-                        </h1>
+                        <span className="text-5xs font-bold text-indigo-800">
+                            <Link href="/">UW Trade</Link>
+                        </span>
                     </div>
                     <nav className="flex flex-1 flex-col">
                         <ul
