@@ -89,7 +89,7 @@ export default async function Page() {
                             >
                                 <div className="aspect-h-4 aspect-w-3 bg-gray-200 sm:aspect-none group-hover:opacity-75 sm:h-96">
                                     <img
-                                        src={product.image}
+                                        src={`/images/${product.image}`}
                                         alt={product.name}
                                         className="h-full w-full object-cover object-center sm:h-full sm:w-full"
                                     />

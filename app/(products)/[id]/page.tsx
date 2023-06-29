@@ -65,7 +65,7 @@ export default async function Page({ params }: { params: { id: number } }) {
                             src={
                                 product.image === ''
                                     ? 'https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg'
-                                    : product.image
+                                    : `images/${product.image}`
                             }
                             alt={product.name}
                             className="h-full w-full object-cover object-center"

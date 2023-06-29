@@ -5,12 +5,13 @@ import { toast } from 'react-toastify'
 
 export default function CreateProduct() {
     const [isLoading, setIsLoading] = useState(true)
+    const [previewImage, setPreviewImage] = useState('')
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         price: 0,
         category: '',
-        image: '',
+        image: null,
     })
 
     useEffect(() => {
@@ -32,12 +33,18 @@ export default function CreateProduct() {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault()
+        const formDataToSend = new FormData()
+
+        if (formData.image) {
+            formDataToSend.append('image', formData.image)
+        }
+        formDataToSend.append('name', formData.name)
+        formDataToSend.append('price', formData.price.toString())
+        formDataToSend.append('description', formData.description)
+        formDataToSend.append('category', formData.category)
         const res = await fetch('http://localhost:3001/products', {
             method: 'POST',
-            body: JSON.stringify({ name, description, price, category, image }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            body: formDataToSend,
             credentials: 'include',
             cache: 'no-cache',
         })
@@ -45,6 +52,23 @@ export default function CreateProduct() {
             toast.success('Posted')
         } else {
             toast.warning('Something is wrong')
+        }
+    }
+    const handleImageChange = (e: any) => {
+        const file = e.target.files[0]
+        const maxSize = 10 * 1024 * 1024 // 10MB in bytes
+
+        if (
+            file &&
+            (file.type === 'image/png' || file.type === 'image/jpeg') &&
+            file.size <= maxSize
+        ) {
+            setPreviewImage(URL.createObjectURL(file))
+            setFormData({ ...formData, image: file })
+        } else {
+            toast.warning('File not supported')
+            setPreviewImage(URL.createObjectURL(''))
+            setFormData({ ...formData, image: null })
         }
     }
     if (isLoading) {
@@ -99,7 +123,6 @@ export default function CreateProduct() {
                                 />
                             </div>
                         </div>
-
                         <div className="col-span-full">
                             <label
                                 htmlFor="description"
@@ -115,11 +138,9 @@ export default function CreateProduct() {
                                     onChange={onChange}
                                     rows={3}
                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    defaultValue={''}
                                 />
                             </div>
                         </div>
-
                         <div className="col-span-full">
                             <label
                                 htmlFor="photo"
@@ -129,30 +150,59 @@ export default function CreateProduct() {
                             </label>
                             <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                                 <div className="text-center">
-                                    <PhotoIcon
-                                        className="mx-auto h-12 w-12 text-gray-300"
-                                        aria-hidden="true"
-                                    />
-                                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                        <label
-                                            htmlFor="image"
-                                            className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                        >
-                                            <span>Upload a file</span>
-                                            <input
-                                                id="image"
-                                                name="image"
-                                                value={image}
-                                                onChange={onChange}
-                                                type="file"
-                                                className="sr-only"
+                                    {previewImage ? (
+                                        <>
+                                            <div className="mt-6">
+                                                <img
+                                                    className="mt-6"
+                                                    src={previewImage}
+                                                    alt="Preview"
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={() =>
+                                                    setFormData({
+                                                        ...formData,
+                                                        image: null,
+                                                    })
+                                                }
+                                                className="mt-10 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                            >
+                                                Reset Image
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <PhotoIcon
+                                                className="mx-auto h-12 w-12 text-gray-300"
+                                                aria-hidden="true"
                                             />
-                                        </label>
-                                        <p className="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p className="text-xs leading-5 text-gray-600">
-                                        PNG, JPG, GIF up to 10MB
-                                    </p>
+                                            <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                                                <label
+                                                    htmlFor="image"
+                                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                                >
+                                                    <span>Upload a file</span>
+                                                    <input
+                                                        id="image"
+                                                        name="image"
+                                                        value={image}
+                                                        onChange={
+                                                            handleImageChange
+                                                        }
+                                                        type="file"
+                                                        className="sr-only"
+                                                    />
+                                                </label>
+                                                <p className="pl-1">
+                                                    or drag and drop
+                                                </p>
+                                            </div>
+                                            <p className="text-xs leading-5 text-gray-600">
+                                                PNG, JPEG up to 10MB
+                                            </p>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
