@@ -1,5 +1,6 @@
 'use client'
 import { Fragment, useState } from 'react'
+import { ToastContainer } from 'react-toastify'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import {
     Bars3Icon,
@@ -11,16 +12,29 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 
-import { classNames } from '../_utils/styles'
-import Link from "next/link";
+import { classNames } from '../_utils/styles/styles'
+import Link from 'next/link'
 const navigation = [
-    { name: 'Marketplace', href: '#', icon: HomeIcon, current: true },
-    { name: 'Favourite', href: '#', icon: StarIcon, current: false },
+    { name: 'Marketplace', href: '/', icon: HomeIcon, current: true },
+    { name: 'Favourite', href: 'favourite', icon: StarIcon, current: false },
 ]
 
 const userNavigation = [
-    { name: 'Your profile', href: '#' },
-    { name: 'Sign out', href: '#' },
+    { name: 'Your profile', href: '#', onClick: undefined },
+    {
+        name: 'Sign out',
+        href: '#',
+        onClick: async () => {
+            const res = await fetch('http://localhost:3001/auth/logout', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            })
+            window.location.reload()
+        },
+    },
 ]
 
 export default function MainLayout({
@@ -32,6 +46,18 @@ export default function MainLayout({
 
     return (
         <>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
             <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
                     as="div"
@@ -104,9 +130,12 @@ export default function MainLayout({
                                                 type="button"
                                                 className="-mx-2 space-y-1 inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                             >
-                                                <p className="text-center w-full">
+                                                <Link
+                                                    href="/create-product"
+                                                    className="text-center w-full"
+                                                >
                                                     SELL
-                                                </p>
+                                                </Link>
                                             </button>
                                             <li>
                                                 <ul
@@ -115,7 +144,7 @@ export default function MainLayout({
                                                 >
                                                     {navigation.map((item) => (
                                                         <li key={item.name}>
-                                                            <a
+                                                            <Link
                                                                 href={item.href}
                                                                 className={classNames(
                                                                     item.current
@@ -134,7 +163,7 @@ export default function MainLayout({
                                                                     aria-hidden="true"
                                                                 />
                                                                 {item.name}
-                                                            </a>
+                                                            </Link>
                                                         </li>
                                                     ))}
                                                 </ul>
@@ -179,7 +208,12 @@ export default function MainLayout({
                                 type="button"
                                 className="-mx-2 space-y-1 inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
-                                <p className="text-center w-full">SELL</p>
+                                <Link
+                                    href="/create-product"
+                                    className="text-center w-full"
+                                >
+                                    SELL
+                                </Link>
                             </button>
                             <li>
                                 <ul role="list" className="-mx-2 space-y-1">
@@ -304,9 +338,7 @@ export default function MainLayout({
                                             <span
                                                 className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                                                 aria-hidden="true"
-                                            >
-                                                Ryan Deng
-                                            </span>
+                                            ></span>
                                             <ChevronDownIcon
                                                 className="ml-2 h-5 w-5 text-gray-400"
                                                 aria-hidden="true"
@@ -328,6 +360,9 @@ export default function MainLayout({
                                                     {({ active }) => (
                                                         <a
                                                             href={item.href}
+                                                            onClick={
+                                                                item.onClick
+                                                            }
                                                             className={classNames(
                                                                 active
                                                                     ? 'bg-gray-50'
