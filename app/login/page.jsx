@@ -1,9 +1,46 @@
+'use client'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+
 export default function Login() {
+    const searchParams = useSearchParams()
+    useEffect(() => {
+        if (searchParams.has('unauthenticated')) {
+            toast.error('You are not logged in yet') // Display the toast message
+        }
+    }, [])
+
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+    })
+    const { email, password } = formData
+    const onChange = () =>
+        setFormData({ ...formData, [e.target.name]: e.target.value })
+    const handleLogin = async (e) => {
+        e.preventDefault()
+        console.log(formData)
+        const res = await fetch('http://localhost:3001/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        })
+        if (res.status == 200) {
+            toast.success('Logged In')
+        } else {
+            toast.warning('Something is wrong')
+        }
+    }
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                    <h1 class="text-center text-5xl text-indigo-600">
+                    <h1 className="text-center text-5xl text-indigo-600">
                         UW Trade
                     </h1>
                     <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -25,6 +62,8 @@ export default function Login() {
                                     id="email"
                                     name="email"
                                     type="email"
+                                    value={email}
+                                    onChange={onChange}
                                     autoComplete="email"
                                     required
                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -54,6 +93,8 @@ export default function Login() {
                                     id="password"
                                     name="password"
                                     type="password"
+                                    value={password}
+                                    onChange={onChange}
                                     autoComplete="current-password"
                                     required
                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -63,7 +104,7 @@ export default function Login() {
 
                         <div>
                             <button
-                                type="submit"
+                                onClick={handleLogin}
                                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
                                 Sign in
@@ -73,12 +114,9 @@ export default function Login() {
 
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Not yet a member?{' '}
-                        <a
-                            href="#"
-                            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-                        >
-                            Sign up
-                        </a>
+                        <span className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                            <Link href="/register">Sign up</Link>
+                        </span>
                     </p>
                 </div>
             </div>
