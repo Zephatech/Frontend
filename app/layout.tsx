@@ -1,5 +1,6 @@
-import './globals.css'
+import './_utils/styles/globals.css'
 import MainLayout from './_components/main-layout'
+import 'react-toastify/dist/ReactToastify.css'
 
 export const metadata = {
     title: 'UW Trade',
