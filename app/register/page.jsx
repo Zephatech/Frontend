@@ -11,7 +11,7 @@ export default function Register() {
         password: '',
     })
     const { firstName, lastName, email, password } = formData
-    const onChange = () =>
+    const onChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value })
     const handleRegister = async (e) => {
         e.preventDefault()
