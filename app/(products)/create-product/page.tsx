@@ -2,8 +2,9 @@
 import { PhotoIcon } from '@heroicons/react/24/solid'
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
-
+import { useRouter } from 'next/navigation'
 export default function CreateProduct() {
+    const router = useRouter()
     const [isLoading, setIsLoading] = useState(true)
     const [previewImage, setPreviewImage] = useState('')
     const [formData, setFormData] = useState({
@@ -58,6 +59,7 @@ export default function CreateProduct() {
             }
             return res.json()
         })
+        router.back()
     }
     const handleImageChange = (e: any) => {
         const file = e.target.files[0]

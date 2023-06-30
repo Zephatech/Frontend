@@ -3,7 +3,7 @@ import { useGlobalContext } from '../contexts/globalContext'
 
 export const useAuth = ({ redirect = true }: { redirect: boolean }) => {
     // Function to check user authentication status
-    const { user } = useGlobalContext()
+    const { user, setLoading } = useGlobalContext()
     const [isAuth, setIsAuth] = useState(false)
     const [userId, setUserId] = useState<>()
     const checkAuth = async () => {
@@ -24,7 +24,9 @@ export const useAuth = ({ redirect = true }: { redirect: boolean }) => {
     }
 
     useEffect(() => {
+        setLoading(true)
         checkAuth()
+        setLoading(false)
     }, [user])
 
     return { isAuth, userId }

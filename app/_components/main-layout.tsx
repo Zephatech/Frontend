@@ -12,7 +12,7 @@ import {
     StarIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-
+import { useGlobalContext } from '../_utils/contexts/globalContext'
 import { classNames } from '../_utils/styles/styles'
 import Link from 'next/link'
 import { useAuth } from '../_utils/auth/use-auth'
@@ -45,15 +45,19 @@ export default function MainLayout({
     children: React.ReactNode
 }) {
     const router = useRouter()
+    const { loading } = useGlobalContext()
     const { isAuth } = useAuth({ redirect: false })
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
+    if (loading) {
+        return <></>
+    }
     return (
         <>
             <ToastContainer
                 position="top-right"
-                autoClose={2000}
-                hideProgressBar={false}
+                autoClose={300}
+                hideProgressBar={true}
                 newestOnTop={false}
                 closeOnClick
                 rtl={false}
