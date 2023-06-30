@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react'
 export const useAuth = ({ redirect = true }: { redirect: boolean }) => {
     // Function to check user authentication status
     const [isAuth, setIsAuth] = useState(false)
-    const checkAuth = () => {
-        fetch('http://localhost:3001/auth/getCurrentUserId', {
+    const [userId, setUserId] = useState<>()
+    const checkAuth = async () => {
+        const res = await fetch('http://localhost:3001/auth/getCurrentUserId', {
             cache: 'no-cache',
             credentials: 'include',
         }).then((res) => {
@@ -14,13 +15,15 @@ export const useAuth = ({ redirect = true }: { redirect: boolean }) => {
                 }
             } else {
                 setIsAuth(true)
+                return res.json()
             }
         })
+        setUserId(res?.userId)
     }
 
     useEffect(() => {
         checkAuth()
     }, [])
 
-    return isAuth
+    return { isAuth, userId }
 }

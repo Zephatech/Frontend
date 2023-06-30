@@ -5,6 +5,9 @@ import {
 } from '@heroicons/react/20/solid'
 import { classNames } from '../_utils/styles/styles'
 import Link from 'next/link'
+import { useAuth } from '../_utils/auth/use-auth'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 const tabs = [
     { name: 'Textbooks', href: '#', current: true },
@@ -12,17 +15,37 @@ const tabs = [
     { name: 'School Supply', href: '#', current: false },
 ]
 
-const getProducts = async () => {
-    const res = await fetch('http://localhost:3001/products', {
-        cache: 'no-cache',
-    }).then((res) => {
-        return res.json()
-    })
-    return res
-}
-
-export default async function Page() {
-    const products = await getProducts()
+export default function Page() {
+    const { isAuth, userId } = useAuth({ redirect: false })
+    const [products, setProducts] = useState()
+    useEffect(() => {
+        const getProducts = async () => {
+            const res = await fetch('http://localhost:3001/products', {
+                cache: 'no-cache',
+            }).then((res) => {
+                return res.json()
+            })
+            setProducts(res)
+        }
+        getProducts()
+    }, [])
+    if (!products) {
+        return <></>
+    }
+    const handleRemoveProduct = async (id: number) => {
+        const res = await fetch(`http://localhost:3001/products/${id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            cache: 'no-cache',
+        }).then((res) => {
+            if (res.status == 200) {
+                toast.success('Post Removed')
+                if (products) {
+                    setProducts(products.filter((product) => product.id !== id))
+                }
+            }
+        })
+    }
     return (
         <>
             <div>
@@ -90,29 +113,47 @@ export default async function Page() {
                                 className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white"
                             >
                                 <div className="aspect-h-4 aspect-w-3 bg-gray-200 sm:aspect-none group-hover:opacity-75 sm:h-96">
-                                    <img
-                                        src={`/images/${product.image}`}
-                                        alt={product.name}
-                                        className="h-full w-full object-cover object-center sm:h-full sm:w-full"
-                                    />
+                                    <Link href={`/${product.id}`}>
+                                        <img
+                                            src={`/images/${product.image}`}
+                                            alt={product.name}
+                                            className="h-full w-full object-cover object-center sm:h-full sm:w-full"
+                                        />
+                                    </Link>
                                 </div>
                                 <div className="flex flex-1 flex-col space-y-2 p-4">
                                     <h3 className="text-sm font-medium text-gray-900">
-                                        <Link href={`/${product.id}`}>
-                                            <span
-                                                aria-hidden="true"
-                                                className="absolute inset-0"
-                                            />
-                                            {product.name}
-                                        </Link>
+                                        <span aria-hidden="true" />
+                                        {product.name}
                                     </h3>
                                     <p className="text-sm text-gray-500">
                                         {product.description}
                                     </p>
-                                    <div className="flex flex-1 flex-col justify-end">
+                                    <div className="flex flex-1 flex-row items-center justify-between ">
                                         <p className="text-base font-medium text-gray-900">
                                             {product.price}
                                         </p>
+                                        {userId == product.ownerId && (
+                                            <div>
+                                                <button
+                                                    onClick={() =>
+                                                        handleRemoveProduct(
+                                                            product.id
+                                                        )
+                                                    }
+                                                    className="bg-transparent mr-2 hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-2 border border-red-500 hover:border-transparent rounded"
+                                                >
+                                                    remove
+                                                </button>
+                                                <Link
+                                                    href={`/update-product?id=${product.id}`}
+                                                >
+                                                    <button className="bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-1 px-2 border border-gray-500 hover:border-transparent rounded">
+                                                        modify
+                                                    </button>
+                                                </Link>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
