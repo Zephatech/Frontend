@@ -47,12 +47,17 @@ export default function CreateProduct() {
             body: formDataToSend,
             credentials: 'include',
             cache: 'no-cache',
+        }).then((res) => {
+            if (res.status == 200) {
+                toast.success('Posted')
+            } else {
+                return res.json().then((res) => {
+                    toast.warning(res.message)
+                    return res
+                })
+            }
+            return res.json()
         })
-        if (res.status == 200) {
-            toast.success('Posted')
-        } else {
-            toast.warning('Something is wrong')
-        }
     }
     const handleImageChange = (e: any) => {
         const file = e.target.files[0]
