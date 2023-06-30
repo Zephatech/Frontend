@@ -2,6 +2,7 @@
 import { Fragment, useState } from 'react'
 import { ToastContainer } from 'react-toastify'
 import { Dialog, Menu, Transition } from '@headlessui/react'
+import { useRouter } from 'next/navigation'
 import {
     Bars3Icon,
     BellIcon,
@@ -25,7 +26,7 @@ const userNavigation = [
     {
         name: 'Sign out',
         href: '#',
-        onClick: async () => {
+        onClick: async (router: any) => {
             const res = await fetch('http://localhost:3001/auth/logout', {
                 method: 'GET',
                 headers: {
@@ -33,7 +34,7 @@ const userNavigation = [
                 },
                 credentials: 'include',
             })
-            window.location.reload()
+            window.location.href = '/'
         },
     },
 ]
@@ -43,6 +44,7 @@ export default function MainLayout({
 }: {
     children: React.ReactNode
 }) {
+    const router = useRouter()
     const { isAuth } = useAuth({ redirect: false })
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -374,8 +376,10 @@ export default function MainLayout({
                                                     {({ active }) => (
                                                         <a
                                                             href={item.href}
-                                                            onClick={
-                                                                item.onClick
+                                                            onClick={() =>
+                                                                item.onClick(
+                                                                    router
+                                                                )
                                                             }
                                                             className={classNames(
                                                                 active
