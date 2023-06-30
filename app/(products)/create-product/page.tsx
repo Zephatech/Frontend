@@ -155,6 +155,7 @@ export default function CreateProduct() {
                                             <div className="mt-6">
                                                 <img
                                                     className="mt-6"
+                                                    width="300"
                                                     src={previewImage}
                                                     alt="Preview"
                                                 />

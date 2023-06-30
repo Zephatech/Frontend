@@ -1,9 +1,11 @@
+'use client'
 import {
     ArrowLongLeftIcon,
     ArrowLongRightIcon,
 } from '@heroicons/react/20/solid'
 import { classNames } from '../_utils/styles/styles'
 import Link from 'next/link'
+
 const tabs = [
     { name: 'Textbooks', href: '#', current: true },
     { name: 'Living Supply', href: '#', current: false },
