@@ -17,7 +17,7 @@ export const GlobalContext = React.createContext<IGlobalContextProps>({
 
 export const useGlobalContext = () => useContext(GlobalContext)
 export const GlobalContextProvider = ({ children }: { children: any }) => {
-    const [currentUser, setCurrentUser] = useState({})
+    const [currentUser, setCurrentUser] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
 
     return (

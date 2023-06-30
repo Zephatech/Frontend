@@ -3,8 +3,9 @@ import { PhotoIcon } from '@heroicons/react/24/solid'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
-
+import { useRouter } from 'next/navigation'
 export default function UpdateProduct() {
+    const router = useRouter()
     const searchParams = useSearchParams()
     const productId = searchParams.get('id')
     const [isLoading, setIsLoading] = useState(true)
@@ -36,6 +37,9 @@ export default function UpdateProduct() {
                 category: res.category,
                 image: res.image,
             })
+            if (res.image) {
+                setPreviewImage(`images/${res.image}`)
+            }
         }
         getProduct()
     }, [])
@@ -62,6 +66,7 @@ export default function UpdateProduct() {
             cache: 'no-cache',
         })
         if (res.status == 200) {
+            router.back()
             toast.success('Posted')
         } else {
             toast.warning('Something is wrong')
@@ -167,17 +172,18 @@ export default function UpdateProduct() {
                                                 <img
                                                     className="mt-6"
                                                     width="300"
-                                                    src={`images/${previewImage}`}
+                                                    src={previewImage}
                                                     alt="Preview"
                                                 />
                                             </div>
                                             <button
-                                                onClick={() =>
+                                                onClick={() => {
+                                                    setPreviewImage('')
                                                     setFormData({
                                                         ...formData,
                                                         image: '',
                                                     })
-                                                }
+                                                }}
                                                 className="mt-10 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                             >
                                                 Reset Image

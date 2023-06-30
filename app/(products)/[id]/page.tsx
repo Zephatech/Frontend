@@ -1,19 +1,31 @@
 'use client'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
-const getProduct = async (id: Number) => {
-    const res = await fetch(`http://localhost:3001/products/${id}`, {
-        cache: 'no-cache',
-    }).then((res) => {
-        return res.json()
-    })
-    return res
-}
+import { useGlobalContext } from '@/app/_utils/contexts/globalContext'
+import { useEffect, useState } from 'react'
 
-export default async function Page({ params }: { params: { id: number } }) {
-    const product = await getProduct(params.id)
-    console.log(product)
-
+export default function Page({ params }: { params: { id: number } }) {
+    const [product, setProduct] = useState()
+    const [productLoading, setProductLoading] = useState(true)
+    useEffect(() => {
+        const getProduct = async (id: Number) => {
+            const res = await fetch(`http://localhost:3001/products/${id}`, {
+                cache: 'no-cache',
+            }).then((res) => {
+                return res.json()
+            })
+            return res
+        }
+        getProduct(params.id).then((res) => {
+            setProduct(res)
+            setProductLoading(false)
+        })
+    }, [])
+    const { user, loading } = useGlobalContext()
+    console.log(user)
+    if (loading || productLoading) {
+        return <></>
+    }
     return (
         <div className="bg-white">
             <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
@@ -80,14 +92,16 @@ export default async function Page({ params }: { params: { id: number } }) {
                         </h2>
 
                         <form>
-                            <div className="mt-10">
-                                <button
-                                    type="submit"
-                                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-                                >
-                                    Ask to Buy
-                                </button>
-                            </div>
+                            {user && (
+                                <div className="mt-10">
+                                    <button
+                                        type="submit"
+                                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                    >
+                                        Ask to Buy
+                                    </button>
+                                </div>
+                            )}
                             <div className="mt-6 text-center">
                                 <a
                                     href="#"

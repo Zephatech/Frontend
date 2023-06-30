@@ -26,7 +26,7 @@ const userNavigation = [
     {
         name: 'Sign out',
         href: '#',
-        onClick: async (router: any) => {
+        onClick: async (setUser: any) => {
             const res = await fetch('http://localhost:3001/auth/logout', {
                 method: 'GET',
                 headers: {
@@ -34,6 +34,7 @@ const userNavigation = [
                 },
                 credentials: 'include',
             })
+            setUser(false)
             window.location.href = '/'
         },
     },
@@ -45,7 +46,7 @@ export default function MainLayout({
     children: React.ReactNode
 }) {
     const router = useRouter()
-    const { loading } = useGlobalContext()
+    const { loading, setUser } = useGlobalContext()
     const { isAuth } = useAuth({ redirect: false })
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -390,7 +391,7 @@ export default function MainLayout({
                                                             href={item.href}
                                                             onClick={() =>
                                                                 item.onClick(
-                                                                    router
+                                                                    setUser
                                                                 )
                                                             }
                                                             className={classNames(

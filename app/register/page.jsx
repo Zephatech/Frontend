@@ -2,8 +2,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 export default function Register() {
+    const router = useRouter()
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -25,6 +27,8 @@ export default function Register() {
         })
         if (res.status == 200) {
             toast.success('Registered')
+
+            router.replace('/login')
         } else {
             toast.warning('Something is wrong')
         }

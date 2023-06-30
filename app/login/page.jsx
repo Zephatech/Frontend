@@ -36,7 +36,7 @@ export default function Login() {
         if (res.status == 200) {
             toast.success('Logged In')
             setUser(true)
-            router.back()
+            router.replace('/')
         } else {
             toast.warning('Something is wrong')
         }
@@ -120,7 +120,15 @@ export default function Login() {
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Not yet a member?{' '}
                         <span className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                            <Link href="/register">Sign up</Link>
+                            <a
+                                // href="/register"
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    router.replace('/register')
+                                }}
+                            >
+                                Sign up
+                            </a>
                         </span>
                     </p>
                 </div>
