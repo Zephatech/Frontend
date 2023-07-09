@@ -57,7 +57,7 @@ export default function CreateProduct() {
         }).then((res) => {
             if (res.status == 200) {
                 toast.success('Posted')
-                router.back()
+                router.replace('/')
             } else {
                 return res.json().then((res) => {
                     setToxicModal(true)

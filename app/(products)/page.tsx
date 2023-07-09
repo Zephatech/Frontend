@@ -10,7 +10,11 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 const tabs = [
-    { name: 'Textbooks', href: '#', current: true },
+    {
+        name: 'Textbooks',
+        href: '#',
+        current: false,
+    },
     { name: 'Living Supply', href: '#', current: false },
     { name: 'School Supply', href: '#', current: false },
 ]
@@ -58,7 +62,7 @@ export default function Page() {
                         id="tabs"
                         name="tabs"
                         className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                        defaultValue={tabs.find((tab) => tab.current).name}
+                        defaultValue={tabs.find((tab) => tab.current)?.name}
                     >
                         {tabs.map((tab) => (
                             <option key={tab.name}>{tab.name}</option>
