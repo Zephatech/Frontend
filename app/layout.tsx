@@ -1,7 +1,7 @@
 import './_utils/styles/globals.css'
-import MainLayout from './_components/main-layout'
 import 'react-toastify/dist/ReactToastify.css'
-import { GlobalContextProvider } from './_utils/contexts/globalContext'
+import MainLayout from './_components/main-layout'
+import { GlobalContextProvider } from './_utils/contexts/global-context'
 
 export const metadata = {
     title: 'UW Trade',

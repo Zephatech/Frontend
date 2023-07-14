@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
-import { useGlobalContext } from '../_utils/contexts/globalContext'
+import { useGlobalContext } from '../../_utils/contexts/global-context'
 export default function Login() {
     const { setUser } = useGlobalContext()
     const router = useRouter()

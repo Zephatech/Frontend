@@ -12,7 +12,7 @@ import {
     StarIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { useGlobalContext } from '../_utils/contexts/globalContext'
+import { useGlobalContext } from '../_utils/contexts/global-context'
 import { classNames } from '../_utils/styles/styles'
 import Link from 'next/link'
 import { useAuth } from '../_utils/auth/use-auth'

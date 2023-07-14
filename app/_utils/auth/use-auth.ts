@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useGlobalContext } from '../contexts/globalContext'
+import { useGlobalContext } from '../contexts/global-context'
 
 export const useAuth = ({ redirect = true }: { redirect: boolean }) => {
     // Function to check user authentication status
