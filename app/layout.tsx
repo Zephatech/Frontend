@@ -1,13 +1,16 @@
 import './_utils/styles/globals.css'
 import 'react-toastify/dist/ReactToastify.css'
-import MainLayout from './_components/main-layout'
-import { GlobalContextProvider } from './_utils/contexts/global-context'
+
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+import QueryProvider from './_utils/QueryProvider'
+import MainLayout from './components/MainLayout'
 
 export const metadata = {
     title: 'UW Trade',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: {
     children: React.ReactNode
@@ -15,9 +18,10 @@ export default function RootLayout({
     return (
         <html lang="en" className="h-full bg-white">
             <body>
-                <GlobalContextProvider>
+                <QueryProvider>
                     <MainLayout>{children}</MainLayout>
-                </GlobalContextProvider>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                </QueryProvider>
             </body>
         </html>
     )

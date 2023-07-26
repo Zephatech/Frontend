@@ -1,17 +1,36 @@
 'use client'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
-import { useGlobalContext } from '../../_utils/contexts/global-context'
+
+import { login } from '@/app/_utils/auth'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 export default function Login() {
-    const { setUser } = useGlobalContext()
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: ({
+            email,
+            password,
+        }: {
+            email: string
+            password: string
+        }) => login(email, password),
+        onSuccess: () => {
+            toast.success('Logged In')
+            router.replace('/')
+            queryClient.invalidateQueries({ queryKey: ['auth'] })
+        },
+        onError: () => {
+            toast.warning('Something is wrong')
+        },
+    })
+
     const router = useRouter()
     const searchParams = useSearchParams()
     useEffect(() => {
         if (searchParams.has('unauthenticated')) {
-            toast.error('You are not logged in yet') // Display the toast message
+            toast.error('You are not logged in yet')
         }
     }, [])
 
@@ -20,26 +39,12 @@ export default function Login() {
         password: '',
     })
     const { email, password } = formData
-    const onChange = (e) =>
+    const onChange = (e: { target: { name: any; value: any } }) =>
         setFormData({ ...formData, [e.target.name]: e.target.value })
-    const handleLogin = async (e) => {
+    const handleLogin = async (e: { preventDefault: () => void }) => {
         e.preventDefault()
-        console.log(formData)
-        const res = await fetch('http://localhost:3001/auth/login', {
-            method: 'POST',
-            body: JSON.stringify({ email, password }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        })
-        if (res.status == 200) {
-            toast.success('Logged In')
-            setUser(true)
-            router.replace('/')
-        } else {
-            toast.warning('Something is wrong')
-        }
+        mutation.mutate({ email, password })
+        await login(email, password)
     }
     return (
         <>
@@ -52,7 +57,6 @@ export default function Login() {
                         Log in to your account
                     </h2>
                 </div>
-
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form className="space-y-6" action="#" method="POST">
                         <div>
@@ -75,7 +79,6 @@ export default function Login() {
                                 />
                             </div>
                         </div>
-
                         <div>
                             <div className="flex items-center justify-between">
                                 <label
@@ -106,7 +109,6 @@ export default function Login() {
                                 />
                             </div>
                         </div>
-
                         <div>
                             <button
                                 onClick={handleLogin}
@@ -116,7 +118,6 @@ export default function Login() {
                             </button>
                         </div>
                     </form>
-
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Not yet a member?{' '}
                         <span className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
