@@ -44,7 +44,6 @@ export default function Login() {
     const handleLogin = async (e: { preventDefault: () => void }) => {
         e.preventDefault()
         mutation.mutate({ email, password })
-        await login(email, password)
     }
     return (
         <>

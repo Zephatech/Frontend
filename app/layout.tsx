@@ -1,5 +1,6 @@
-import './_utils/styles/globals.css'
+import '@/app/_utils/styles/globals.css'
 import 'react-toastify/dist/ReactToastify.css'
+import 'react-tooltip/dist/react-tooltip.css'
 
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -12,13 +13,16 @@ export const metadata = {
 
 export default async function RootLayout({
     children,
+    modal,
 }: {
     children: React.ReactNode
+    modal: React.ReactNode
 }) {
     return (
         <html lang="en" className="h-full bg-white">
             <body>
                 <QueryProvider>
+                    {modal}
                     <MainLayout>{children}</MainLayout>
                     <ReactQueryDevtools initialIsOpen={false} />
                 </QueryProvider>

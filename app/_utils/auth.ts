@@ -29,6 +29,24 @@ export const login = (email: string, password: string) => {
     }).then((res) => res.json())
 }
 
+export const verifyEmail = async (email: string, verificationCode: string) => {
+    const res = await fetch('http://localhost:3001/auth/verifyEmail', {
+        method: 'POST',
+        body: JSON.stringify({ email, verificationCode }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    })
+    const data = await res.json()
+    if (res.ok) {
+        data.success = true
+    } else {
+        data.success = false
+    }
+    return data
+}
+
 export const register = (
     firstName: string,
     lastName: string,
@@ -42,5 +60,5 @@ export const register = (
             'Content-Type': 'application/json',
         },
         credentials: 'include',
-    }).then((res) => res.json())
+    })
 }
