@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query'
+
 export const getCurrentUserId = () => {
     return fetch('http://localhost:3001/auth/getCurrentUserId', {
         credentials: 'include',
@@ -18,15 +20,22 @@ export const logout = () => {
     }).then((res) => res.json())
 }
 
-export const login = (email: string, password: string) => {
-    return fetch('http://localhost:3001/auth/login', {
+export const login = async (email: string, password: string) => {
+    const res = await fetch('http://localhost:3001/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: {
             'Content-Type': 'application/json',
         },
         credentials: 'include',
-    }).then((res) => res.json())
+    })
+    const data = await res.json()
+    if (res.status == 200) {
+        data.success = true
+    } else {
+        data.success = false
+    }
+    return data
 }
 
 export const verifyEmail = async (email: string, verificationCode: string) => {
@@ -60,5 +69,12 @@ export const register = (
             'Content-Type': 'application/json',
         },
         credentials: 'include',
+    })
+}
+
+export const useAuth = () => {
+    return useQuery({
+        queryKey: ['auth'],
+        queryFn: getCurrentUserId,
     })
 }

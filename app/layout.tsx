@@ -20,11 +20,14 @@ export default async function RootLayout({
 }) {
     return (
         <html lang="en" className="h-full bg-white">
-            <body>
+            <body className="h-full">
                 <QueryProvider>
                     {modal}
                     <MainLayout>{children}</MainLayout>
-                    <ReactQueryDevtools initialIsOpen={false} />
+                    <ReactQueryDevtools
+                        initialIsOpen={false}
+                        position="bottom-right"
+                    />
                 </QueryProvider>
             </body>
         </html>

@@ -17,16 +17,15 @@ export default function MainLayout({
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     return (
-        <div>
+        <div className="h-full">
             <ToastContainer
                 position="top-right"
-                autoClose={300}
+                autoClose={1000}
                 hideProgressBar={true}
                 newestOnTop={false}
                 closeOnClick
                 rtl={false}
                 pauseOnFocusLoss
-                draggable
                 pauseOnHover
                 theme="light"
             />
@@ -36,6 +35,7 @@ export default function MainLayout({
                     className="relative z-50 lg:hidden"
                     onClose={setSidebarOpen}
                 >
+                    {/* overlay transition */}
                     <Transition.Child
                         as={Fragment}
                         enter="transition-opacity ease-linear duration-300"
@@ -45,9 +45,10 @@ export default function MainLayout({
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-gray-900/80" />
+                        <div className="fixed inset-0 overlay" />
                     </Transition.Child>
 
+                    {/* sidebar & close button transition */}
                     <div className="fixed inset-0 flex">
                         <Transition.Child
                             as={Fragment}
@@ -97,11 +98,11 @@ export default function MainLayout({
             </Transition.Root>
 
             {/* Static sidebar for desktop */}
-            <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+            <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72">
                 <SideBar isStatic={true} />
             </div>
 
-            <div className="lg:pl-72">
+            <div className="lg:pl-72 h-full">
                 <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
                     <button
                         type="button"
@@ -147,8 +148,8 @@ export default function MainLayout({
                     </div>
                 </div>
 
-                <main className="py-10">
-                    <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+                <main className="py-6 lg:py-8 px-6 lg:px-8 h-[calc(100%-4rem)]">
+                    {children}
                 </main>
             </div>
         </div>

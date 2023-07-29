@@ -9,14 +9,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getCurrentUserId, logout } from '../_utils/auth'
 import { classNames } from '../_utils/styles/styles'
 
-const userNavigation = [
-    { name: 'Your profile', href: '#' },
-    { name: 'Sign out', href: '#' },
-]
-
 export default function ProfileDropdown() {
     const queryClient = useQueryClient()
-
     const { data, isLoading, isError } = useQuery({
         queryKey: ['auth'],
         queryFn: getCurrentUserId,
@@ -26,46 +20,55 @@ export default function ProfileDropdown() {
     const mutation = useMutation({
         mutationFn: logout,
         onSuccess: () => {
-            // Invalidate and refetch
             queryClient.invalidateQueries({ queryKey: ['auth'] })
-            console.log('hi')
         },
     })
-    // const { userId, isLoading } = useGetCurrentUserId()
-    // const { trigger } = useLogout()
+
+    if (isLoading) {
+        return null
+    }
+    if (isError) {
+        return <p className="text-sm">Error loading user...</p>
+    }
+
+    if (!userId) {
+        return (
+            <p className="text-sm">
+                <Link
+                    href="/register"
+                    className="  text-indigo-600 hover:text-indigo-400"
+                >
+                    Register
+                </Link>
+                {' or '}
+                <Link
+                    href="/login"
+                    className=" text-indigo-600 hover:text-indigo-400"
+                >
+                    Log in
+                </Link>
+            </p>
+        )
+    }
+
     return (
         <Menu as="div" className="relative">
             <Menu.Button className="-m-1.5 flex items-center p-1.5">
                 <span className="sr-only">Open user menu</span>
-                {userId ? (
-                    <>
-                        {/* <img
-                            className="h-8 w-8 rounded-full bg-gray-50"
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            alt=""
-                        /> */}
-                        <span className=" lg:flex lg:items-center">
-                            <span
-                                className="ml-4 text-sm font-semibold leading-6 text-gray-900"
-                                aria-hidden="true"
-                            >
-                                User {userId}
-                            </span>
-                            <ChevronDownIcon
-                                className="ml-2 h-5 w-5 text-gray-400"
-                                aria-hidden="true"
-                            />
-                        </span>
-                    </>
-                ) : (
-                    <Link
-                        href="/login"
-                        className=" rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                <span className=" flex items-center">
+                    <span
+                        className="ml-4 text-sm font-semibold leading-6 text-gray-900"
+                        aria-hidden="true"
                     >
-                        Log In
-                    </Link>
-                )}
+                        User {userId}
+                    </span>
+                    <ChevronDownIcon
+                        className="ml-2 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                    />
+                </span>
             </Menu.Button>
+
             <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"

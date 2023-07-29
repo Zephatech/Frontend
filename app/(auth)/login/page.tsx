@@ -1,13 +1,23 @@
 'use client'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { FieldErrors, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
-import { login } from '@/app/_utils/auth'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { login, useAuth } from '@/app/_utils/auth'
+import { useMutation } from '@tanstack/react-query'
+
+type FormValues = {
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+    agreeTOS: boolean
+}
 
 export default function Login() {
-    const queryClient = useQueryClient()
+    const router = useRouter()
+    const { data, isLoading } = useAuth()
+    const userId = data?.userId
     const mutation = useMutation({
         mutationFn: ({
             email,
@@ -16,121 +26,109 @@ export default function Login() {
             email: string
             password: string
         }) => login(email, password),
-        onSuccess: () => {
-            toast.success('Logged In')
-            router.replace('/')
-            queryClient.invalidateQueries({ queryKey: ['auth'] })
+        onSuccess: (data) => {
+            console.log(data)
+            if (data.success) {
+                toast.success('Logged in')
+                router.replace(`/`)
+            } else {
+                toast.warning(data?.message)
+            }
         },
         onError: () => {
             toast.warning('Something is wrong')
         },
     })
+    const form = useForm<FormValues>()
+    const { register, handleSubmit, formState } = form
+    const { errors } = formState
 
-    const router = useRouter()
-    const searchParams = useSearchParams()
-    useEffect(() => {
-        if (searchParams.has('unauthenticated')) {
-            toast.error('You are not logged in yet')
-        }
-    }, [])
-
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-    })
-    const { email, password } = formData
-    const onChange = (e: { target: { name: any; value: any } }) =>
-        setFormData({ ...formData, [e.target.name]: e.target.value })
-    const handleLogin = async (e: { preventDefault: () => void }) => {
-        e.preventDefault()
-        mutation.mutate({ email, password })
+    const onSubmit = (data: FormValues) => {
+        mutation.mutate({
+            email: data.email,
+            password: data.password,
+        })
     }
+
+    const onError = (errors: FieldErrors<FormValues>) => {
+        console.log('Form Errors', errors)
+    }
+
+    if (userId || isLoading) {
+        if (userId) {
+            toast.info('Already logged in, redirected to homepage')
+            router.replace('/')
+        }
+        return null
+    }
+
     return (
         <>
-            <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                    <h1 className="text-center text-5xl text-indigo-600">
-                        UW Trade
-                    </h1>
-                    <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                        Log in to your account
-                    </h2>
-                </div>
-                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form className="space-y-6" action="#" method="POST">
+            <div className="flex flex-col items-center mt-20">
+                <h1 className="text-xl text-indigo-600 font-semibold text-center">
+                    Log in to your account
+                </h1>
+                <div className="w-[25rem] mt-7">
+                    <form
+                        className="space-y-5"
+                        onSubmit={handleSubmit(onSubmit, onError)}
+                        noValidate
+                    >
                         <div>
-                            <label
-                                htmlFor="email"
-                                className="block text-sm font-medium leading-6 text-gray-900"
-                            >
-                                Email address
-                            </label>
-                            <div className="mt-2">
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    value={email}
-                                    onChange={onChange}
-                                    autoComplete="email"
-                                    required
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
+                            <input
+                                id="email"
+                                type="email"
+                                {...register('email', {
+                                    required: 'Email is required',
+                                })}
+                                placeholder="UWaterloo Email Address"
+                                className="input-field"
+                            />
+                            <p className=" text-red-600 text-sm">
+                                {errors.email?.message}
+                            </p>
                         </div>
                         <div>
-                            <div className="flex items-center justify-between">
-                                <label
-                                    htmlFor="password"
-                                    className="block text-sm font-medium leading-6 text-gray-900"
+                            <input
+                                id="password"
+                                type="password"
+                                {...register('password', {
+                                    required: 'Password is required',
+                                })}
+                                placeholder="Password"
+                                className="input-field"
+                            />
+                            <p className="text-red-600 text-sm">
+                                {errors.password?.message}
+                            </p>
+                        </div>
+                        <div className="!mt-3">
+                            <div className="text-sm">
+                                <a
+                                    href="#"
+                                    className="font-semibold text-indigo-600 hover:text-indigo-500"
                                 >
-                                    Password
-                                </label>
-                                <div className="text-sm">
-                                    <a
-                                        href="#"
-                                        className="font-semibold text-indigo-600 hover:text-indigo-500"
-                                    >
-                                        Forgot password?
-                                    </a>
-                                </div>
+                                    Forgot password?
+                                </a>
                             </div>
-                            <div className="mt-2">
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    value={password}
-                                    onChange={onChange}
-                                    autoComplete="current-password"
-                                    required
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <button
-                                onClick={handleLogin}
-                                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            >
-                                Sign in
+                            <button type="submit" className="mt-3 primary-btn">
+                                Log in
                             </button>
                         </div>
+                        <p className="text-center text-xs text-gray-400">
+                            Not yet a member?{' '}
+                            <span className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                                <span
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        router.replace('/register')
+                                    }}
+                                >
+                                    Sign up
+                                </span>
+                            </span>
+                        </p>
                     </form>
-                    <p className="mt-10 text-center text-sm text-gray-500">
-                        Not yet a member?{' '}
-                        <span className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                            <a
-                                // href="/register"
-                                className="cursor-pointer"
-                                onClick={() => {
-                                    router.replace('/register')
-                                }}
-                            >
-                                Sign up
-                            </a>
-                        </span>
-                    </p>
                 </div>
             </div>
         </>
