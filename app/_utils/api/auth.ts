@@ -78,3 +78,24 @@ export const useAuth = () => {
         queryFn: getCurrentUserId,
     })
 }
+
+/* Potentially useful for server side get auth */
+
+// import { cookies } from 'next/headers'
+// export default async function getCurrentUserId() {
+//     const res = await fetch('http://localhost:3001/auth/getCurrentUserId', {
+//         cache: 'no-cache',
+//         headers: {
+//             Cookie: cookies()
+//                 .getAll()
+//                 .map(({ name, value }) => `${name}=${value}`)
+//                 .join('; '),
+//         },
+//     })
+//     const data = await res.json()
+//     console.log(data)
+//     const userId = data?.userId
+//     return userId != null
+//         ? { status: 'SIGNED_IN', userId }
+//         : { status: 'SIGNED_OUT', userId: null }
+// }

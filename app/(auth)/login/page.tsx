@@ -1,10 +1,11 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { FieldErrors, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
-import { login, useAuth } from '@/app/_utils/auth'
+import { login, useAuth } from '@/app/_utils/api/auth'
 import { useMutation } from '@tanstack/react-query'
+import { useEffect } from 'react'
 
 type FormValues = {
     firstName: string
@@ -18,6 +19,14 @@ export default function Login() {
     const router = useRouter()
     const { data, isLoading } = useAuth()
     const userId = data?.userId
+    const searchParams = useSearchParams()
+
+    useEffect(() => {
+        if (searchParams.has('unauthenticated')) {
+            toast.error('You are not logged in yet') // Display the toast message
+        }
+    }, [])
+
     const mutation = useMutation({
         mutationFn: ({
             email,

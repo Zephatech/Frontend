@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import OtpInput from 'react-otp-input'
 import { toast } from 'react-toastify'
 
-import { verifyEmail } from '@/app/_utils/auth'
+import { verifyEmail } from '@/app/_utils/api/auth'
 import { classNames } from '@/app/_utils/styles/styles'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 

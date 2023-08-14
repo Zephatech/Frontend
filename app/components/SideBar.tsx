@@ -6,16 +6,22 @@ import {
     Cog6ToothIcon,
     FolderIcon,
     HomeIcon,
-    UsersIcon,
+    CurrencyDollarIcon,
     InformationCircleIcon,
+    PlusIcon,
 } from '@heroicons/react/24/outline'
 import { classNames } from '../_utils/styles/styles'
 
 const navigation = [
-    { name: 'Marketplace', href: '#', icon: HomeIcon, current: true },
-    { name: 'Chat', href: '#', icon: UsersIcon, current: false },
-    { name: 'Favourite', href: '/favourite', icon: FolderIcon, current: false },
-    { name: 'Manage Postings', href: '#', icon: ChartPieIcon, current: false },
+    { name: 'Marketplace', href: '#', icon: HomeIcon, current: false },
+    // { name: 'Chat', href: '#', icon: UsersIcon, current: false },
+    // { name: 'Favourite', href: '/favourite', icon: FolderIcon, current: false },
+    {
+        name: 'Sell',
+        href: '/create-product',
+        icon: CurrencyDollarIcon,
+        current: false,
+    },
 ]
 
 export default function SideBar({

@@ -5,7 +5,7 @@ import { FieldErrors, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
 
-import { register as registerFn, useAuth } from '@/app/_utils/auth'
+import { register as registerFn, useAuth } from '@/app/_utils/api/auth'
 import { useMutation } from '@tanstack/react-query'
 
 type FormValues = {

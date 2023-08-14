@@ -6,7 +6,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { getCurrentUserId, logout } from '../_utils/auth'
+import { getCurrentUserId, logout } from '../_utils/api/auth'
 import { classNames } from '../_utils/styles/styles'
 
 export default function ProfileDropdown() {
