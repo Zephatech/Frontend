@@ -10,7 +10,7 @@ import { useQueryClient } from '@tanstack/react-query'
 export default function CreateProduct() {
     const queryClient = useQueryClient()
     const router = useRouter()
-    const [toxicModal, setToxicModal] = useState(false)
+    const [toxicModal, setToxicModal] = useState({ state: false, reason: '' })
     const [previewImage, setPreviewImage] = useState('')
     const [formData, setFormData] = useState({
         name: '',
@@ -58,7 +58,7 @@ export default function CreateProduct() {
                 queryClient.invalidateQueries({ queryKey: ['products'] })
             } else {
                 return res.json().then((res) => {
-                    setToxicModal(true)
+                    setToxicModal({ state: true, reason: 'nah' })
                 })
             }
         })
@@ -246,14 +246,25 @@ export default function CreateProduct() {
                     </button>
                 </div>
             </form>
-            <Transition.Root show={toxicModal} as={Fragment}>
+            <Transition.Root show={toxicModal.state} as={Fragment}>
                 <Dialog
                     as="div"
-                    className="relative z-10"
+                    className="relative z-50"
                     onClose={() => {
-                        setToxicModal(false)
+                        setToxicModal({ state: false, reason: '' })
                     }}
                 >
+                    <Transition.Child
+                        as={Fragment}
+                        enter="transition-opacity ease-linear duration-100"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity ease-linear duration-100"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 overlay" />
+                    </Transition.Child>
                     <div className="fixed inset-0 z-10 overflow-y-auto">
                         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                             <Transition.Child
@@ -278,14 +289,22 @@ export default function CreateProduct() {
                                                 as="h3"
                                                 className="text-base font-semibold leading-6 text-gray-900"
                                             >
-                                                Toxic Content Detected
+                                                {toxicModal.reason === 'text'
+                                                    ? 'Toxic Text Detected'
+                                                    : 'Toxic Image Detected'}
                                             </Dialog.Title>
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500">
-                                                    Warning: Detected toxic
+                                                    {toxicModal.reason ===
+                                                    'text'
+                                                        ? `Warning: Detected toxic
                                                     content. Please be mindful
                                                     of your language and ensure
-                                                    respectful communication
+                                                    respectful communication`
+                                                        : `Warning: Detected toxic
+                                                        image. Please be mindful
+                                                        of your uploads and ensure
+                                                        respectful communication`}
                                                 </p>
                                             </div>
                                         </div>
@@ -295,7 +314,10 @@ export default function CreateProduct() {
                                             type="button"
                                             className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                                             onClick={() => {
-                                                setToxicModal(false)
+                                                setToxicModal({
+                                                    state: false,
+                                                    reason: '',
+                                                })
                                             }}
                                         >
                                             Acknowledged
