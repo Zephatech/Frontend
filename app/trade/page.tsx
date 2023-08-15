@@ -1,8 +1,9 @@
 'use client'
+import { Dialog, Transition } from '@headlessui/react'
+
 import Link from 'next/link'
 import { useEffect, useState, Fragment } from 'react'
 import { toast } from 'react-toastify'
-import { ArchiveBoxXMarkIcon } from '@heroicons/react/24/outline'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
     getStatus,
@@ -16,10 +17,24 @@ import {
 import { useAuth } from '../_utils/api/auth'
 import { useRouter } from 'next/navigation'
 import { classNames } from '../_utils/styles/styles'
+import TradeTimeLine from './components/TradeTimeline'
 
 export default function Page() {
     const router = useRouter()
     const [allTrades, setAllTrades] = useState<Trade[][]>()
+    const [confirmActionModel, setConfirmActionModel] = useState({
+        state: false,
+        title: '',
+        description: '',
+        dispatch: () => {},
+    })
+    const [timelineModal, setTimelineModal] = useState<{
+        state: boolean
+        trade: Trade | null
+    }>({
+        state: false,
+        trade: null,
+    })
     const queryClient = useQueryClient()
     const { data, isLoading, isFetching } = useQuery({
         queryKey: ['trades'],
@@ -48,7 +63,8 @@ export default function Page() {
     })
 
     const confirmTradeMutation = useMutation({
-        mutationFn: ({ tradeId }: { tradeId: number }) => confirmTrade(tradeId),
+        mutationFn: ({ trade, sell }: { trade: Trade; sell: Trade[] }) =>
+            confirmTrade(trade, sell),
         onSuccess: async (data) => {
             if (data.success) {
                 toast.success('Trade confirmed')
@@ -80,9 +96,11 @@ export default function Page() {
     const ActionButtons = ({
         trade,
         isSeller,
+        sell,
     }: {
         trade: Trade
         isSeller: boolean
+        sell: Trade[]
     }) => {
         const status = getStatus(trade)
         if (status === 'fulfilled') {
@@ -92,8 +110,19 @@ export default function Page() {
             <>
                 <span
                     onClick={() => {
-                        cancelTradeMutation.mutate({
-                            tradeId: trade.id,
+                        setConfirmActionModel({
+                            state: true,
+                            title: 'Cancellation',
+                            description:
+                                'Are you sure you want to cancel the trade? ' +
+                                (status === 'confirmed'
+                                    ? 'Cancelling a confirmed trade will lower your rating!'
+                                    : ''),
+                            dispatch: () => {
+                                cancelTradeMutation.mutate({
+                                    tradeId: trade.id,
+                                })
+                            },
                         })
                     }}
                     className="text-xs font-medium text-red-800 hover:text-red-600 cursor-pointer"
@@ -103,8 +132,17 @@ export default function Page() {
                 {status === 'requested' && isSeller && (
                     <span
                         onClick={() => {
-                            confirmTradeMutation.mutate({
-                                tradeId: trade.id,
+                            setConfirmActionModel({
+                                state: true,
+                                title: 'Confirmation',
+                                description:
+                                    'Confirming the trade will remove the listing from the marketplace, unless canceled later. Note that canceling a confirmed trade will lower your rating. Are you sure you want to proceed?',
+                                dispatch: () => {
+                                    confirmTradeMutation.mutate({
+                                        trade,
+                                        sell,
+                                    })
+                                },
                             })
                         }}
                         className="text-xs font-medium text-blue-800 hover:text-blue-600 cursor-pointer"
@@ -115,8 +153,16 @@ export default function Page() {
                 {status === 'confirmed' && !isSeller && (
                     <span
                         onClick={() => {
-                            endTradeMutation.mutate({
-                                tradeId: trade.id,
+                            setConfirmActionModel({
+                                state: true,
+                                title: 'Fulfillment',
+                                description:
+                                    'Are you sure you want to mark this trade as fulfilled? Please proceed only when you have received the item.',
+                                dispatch: () => {
+                                    endTradeMutation.mutate({
+                                        tradeId: trade.id,
+                                    })
+                                },
                             })
                         }}
                         className="text-xs font-medium text-blue-800 hover:text-blue-600 cursor-pointer"
@@ -204,16 +250,19 @@ export default function Page() {
                                                         </th>
                                                     </tr>
                                                     {allTrade.map((trade) => (
-                                                        <tr
-                                                            key={
-                                                                trade.product.id
-                                                            }
-                                                        >
+                                                        <tr key={trade.id}>
                                                             <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
                                                                 <div className="flex items-center">
                                                                     <img
                                                                         className="h-11 w-11 rounded-full"
-                                                                        src={`/images/${trade.product.image}`}
+                                                                        src={
+                                                                            trade
+                                                                                .product
+                                                                                .image ===
+                                                                            ''
+                                                                                ? 'https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg'
+                                                                                : `/images/${trade.product.image}`
+                                                                        }
                                                                         alt=""
                                                                     />
                                                                     <div className="ml-4">
@@ -242,8 +291,16 @@ export default function Page() {
 
                                                             <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                                                                 <span
+                                                                    onClick={() => {
+                                                                        setTimelineModal(
+                                                                            {
+                                                                                state: true,
+                                                                                trade,
+                                                                            }
+                                                                        )
+                                                                    }}
                                                                     className={classNames(
-                                                                        'inline-flex items-center rounded-md  px-2 py-1 text-xs font-medium  ring-1 ring-inset',
+                                                                        'cursor-pointer inline-flex items-center rounded-md  px-2 py-1 text-xs font-medium  ring-1 ring-inset',
                                                                         getStatusTextClasses(
                                                                             trade
                                                                         )
@@ -256,14 +313,13 @@ export default function Page() {
                                                             </td>
                                                             <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                                                                 <div className="text-gray-900">
-                                                                    User{' '}
                                                                     {idx === 0
                                                                         ? trade
                                                                               .seller
-                                                                              .id
+                                                                              .firstName
                                                                         : trade
                                                                               .buyer
-                                                                              .id}
+                                                                              .firstName}
                                                                 </div>
                                                             </td>
                                                             <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
@@ -285,6 +341,9 @@ export default function Page() {
                                                                         idx ===
                                                                         1
                                                                     }
+                                                                    sell={
+                                                                        allTrades[1]
+                                                                    }
                                                                 />
                                                             </td>
                                                         </tr>
@@ -297,6 +356,136 @@ export default function Page() {
                         </div>
                     </div>
                 </div>
+                <Transition.Root show={confirmActionModel.state} as={Fragment}>
+                    <Dialog
+                        as="div"
+                        className="relative z-50"
+                        onClose={() => {
+                            setConfirmActionModel({
+                                state: false,
+                                title: '',
+                                description: '',
+                                dispatch: () => {},
+                            })
+                        }}
+                    >
+                        <Transition.Child
+                            as={Fragment}
+                            enter="transition-opacity ease-linear duration-100"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="transition-opacity ease-linear duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0 overlay" />
+                        </Transition.Child>
+                        <div className="fixed inset-0 z-10 overflow-y-auto">
+                            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                >
+                                    <Dialog.Panel className="border-2 border-black-600 relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                                        <div className="sm:flex ">
+                                            <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                                <Dialog.Title
+                                                    as="h3"
+                                                    className="text-base font-semibold leading-6 text-gray-900"
+                                                >
+                                                    {confirmActionModel.title}
+                                                </Dialog.Title>
+                                                <div className="mt-2">
+                                                    <p className="text-xs text-gray-500">
+                                                        {
+                                                            confirmActionModel.description
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-x-2">
+                                            <button
+                                                type="button"
+                                                className="mt-3 inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:mt-0 sm:w-auto"
+                                                onClick={() => {
+                                                    setConfirmActionModel({
+                                                        state: false,
+                                                        title: '',
+                                                        description: '',
+                                                        dispatch: () => {},
+                                                    })
+                                                }}
+                                            >
+                                                No
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                                onClick={() => {
+                                                    confirmActionModel.dispatch()
+                                                    setConfirmActionModel({
+                                                        state: false,
+                                                        title: '',
+                                                        description: '',
+                                                        dispatch: () => {},
+                                                    })
+                                                }}
+                                            >
+                                                Yes
+                                            </button>
+                                        </div>
+                                    </Dialog.Panel>
+                                </Transition.Child>
+                            </div>
+                        </div>
+                    </Dialog>
+                </Transition.Root>
+                <Transition.Root show={timelineModal.state} as={Fragment}>
+                    <Dialog
+                        as="div"
+                        className="relative z-50"
+                        onClose={() => {
+                            setTimelineModal({ ...timelineModal, state: false })
+                        }}
+                    >
+                        <Transition.Child
+                            as={Fragment}
+                            enter="transition-opacity ease-linear duration-100"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="transition-opacity ease-linear duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0 overlay" />
+                        </Transition.Child>
+                        <div className="fixed inset-0 z-10 overflow-y-auto">
+                            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                >
+                                    <Dialog.Panel className="border-2 border-black-600 relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                                        <TradeTimeLine
+                                            trade={timelineModal.trade!!}
+                                        />
+                                    </Dialog.Panel>
+                                </Transition.Child>
+                            </div>
+                        </div>
+                    </Dialog>
+                </Transition.Root>
             </div>
         )
     }

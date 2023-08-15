@@ -285,7 +285,7 @@ export default function CreateProduct() {
                     as="div"
                     className="relative z-50"
                     onClose={() => {
-                        setToxicModal({ state: false, reason: '' })
+                        setToxicModal({ ...toxicModal, state: false })
                     }}
                 >
                     <Transition.Child
@@ -323,19 +323,23 @@ export default function CreateProduct() {
                                                 as="h3"
                                                 className="text-base font-semibold leading-6 text-gray-900"
                                             >
-                                                {toxicModal.reason === 'text'
-                                                    ? 'Toxic Text Detected'
-                                                    : 'Toxic Image Detected'}
+                                                {toxicModal.reason === 'text' &&
+                                                    'Toxic Text Detected'}
+                                                {toxicModal.reason ===
+                                                    'image' &&
+                                                    'Toxic Image Detected'}
                                             </Dialog.Title>
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500">
                                                     {toxicModal.reason ===
-                                                    'text'
-                                                        ? `Warning: Detected toxic
+                                                        'text' &&
+                                                        `Warning: Detected toxic
                                                     content. Please be mindful
                                                     of your language and ensure
-                                                    respectful communication`
-                                                        : `Warning: Detected toxic
+                                                    respectful communication`}
+                                                    {toxicModal.reason ===
+                                                        'image' &&
+                                                        `Warning: Detected toxic
                                                         image. Please be mindful
                                                         of your uploads and ensure
                                                         respectful communication`}
@@ -349,8 +353,8 @@ export default function CreateProduct() {
                                             className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                                             onClick={() => {
                                                 setToxicModal({
+                                                    ...toxicModal,
                                                     state: false,
-                                                    reason: '',
                                                 })
                                             }}
                                         >
@@ -454,7 +458,8 @@ export default function CreateProduct() {
                     as="div"
                     className="relative z-50"
                     onClose={() => {
-                        setAutoDescriptorModal(false)
+                        console.log('here')
+                        // setAutoDescriptorModal(false)
                     }}
                 >
                     <div className="fixed inset-0 overlay" />

@@ -19,6 +19,7 @@ export default function Login() {
     const router = useRouter()
     const { data, isLoading } = useAuth()
     const userId = data?.userId
+
     const searchParams = useSearchParams()
 
     useEffect(() => {

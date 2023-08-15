@@ -53,7 +53,7 @@ export default function Page() {
                         {products.map((product) => (
                             <div
                                 key={product.id}
-                                className="group relative flex flex-col rounded-lg border border-gray-200 bg-white"
+                                className="group relative flex flex-col rounded-lg border border-gray-200 bg-white overflow-hidden"
                             >
                                 <div className="aspect-h-4 aspect-w-3 bg-gray-200 sm:aspect-none group-hover:opacity-75 sm:h-96">
                                     <Link href={`/products/${product.id}`}>
