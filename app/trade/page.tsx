@@ -4,9 +4,18 @@ import { useEffect, useState, Fragment } from 'react'
 import { toast } from 'react-toastify'
 import { ArchiveBoxXMarkIcon } from '@heroicons/react/24/outline'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getTrades, Trade } from '@/app/_utils/api/trades'
+import {
+    getStatus,
+    getStatusTextClasses,
+    getTrades,
+    Trade,
+    cancelTrade,
+    confirmTrade,
+    endTrade,
+} from '@/app/_utils/api/trades'
 import { useAuth } from '../_utils/api/auth'
 import { useRouter } from 'next/navigation'
+import { classNames } from '../_utils/styles/styles'
 
 export default function Page() {
     const router = useRouter()
@@ -22,6 +31,102 @@ export default function Page() {
         isFetching: authIsFetching,
     } = useAuth()
     const userId = authData?.userId
+
+    const cancelTradeMutation = useMutation({
+        mutationFn: ({ tradeId }: { tradeId: number }) => cancelTrade(tradeId),
+        onSuccess: async (data) => {
+            if (data.success) {
+                toast.success('Trade cancelled')
+                queryClient.invalidateQueries({ queryKey: ['trades'] })
+            } else {
+                toast.warning(data?.message)
+            }
+        },
+        onError: () => {
+            toast.warning('Something is wrong')
+        },
+    })
+
+    const confirmTradeMutation = useMutation({
+        mutationFn: ({ tradeId }: { tradeId: number }) => confirmTrade(tradeId),
+        onSuccess: async (data) => {
+            if (data.success) {
+                toast.success('Trade confirmed')
+                queryClient.invalidateQueries({ queryKey: ['trades'] })
+            } else {
+                toast.warning(data?.message)
+            }
+        },
+        onError: () => {
+            toast.warning('Something is wrong')
+        },
+    })
+
+    const endTradeMutation = useMutation({
+        mutationFn: ({ tradeId }: { tradeId: number }) => endTrade(tradeId),
+        onSuccess: async (data) => {
+            if (data.success) {
+                toast.success('Trade fulfilled')
+                queryClient.invalidateQueries({ queryKey: ['trades'] })
+            } else {
+                toast.warning(data?.message)
+            }
+        },
+        onError: () => {
+            toast.warning('Something is wrong')
+        },
+    })
+
+    const ActionButtons = ({
+        trade,
+        isSeller,
+    }: {
+        trade: Trade
+        isSeller: boolean
+    }) => {
+        const status = getStatus(trade)
+        if (status === 'fulfilled') {
+            return null
+        }
+        return (
+            <>
+                <span
+                    onClick={() => {
+                        cancelTradeMutation.mutate({
+                            tradeId: trade.id,
+                        })
+                    }}
+                    className="text-xs font-medium text-red-800 hover:text-red-600 cursor-pointer"
+                >
+                    Cancel
+                </span>
+                {status === 'requested' && isSeller && (
+                    <span
+                        onClick={() => {
+                            confirmTradeMutation.mutate({
+                                tradeId: trade.id,
+                            })
+                        }}
+                        className="text-xs font-medium text-blue-800 hover:text-blue-600 cursor-pointer"
+                    >
+                        Confirm
+                    </span>
+                )}
+                {status === 'confirmed' && !isSeller && (
+                    <span
+                        onClick={() => {
+                            endTradeMutation.mutate({
+                                tradeId: trade.id,
+                            })
+                        }}
+                        className="text-xs font-medium text-blue-800 hover:text-blue-600 cursor-pointer"
+                    >
+                        Fulfill
+                    </span>
+                )}
+            </>
+        )
+    }
 
     useEffect(() => {
         if (!authIsLoading && !authIsFetching && !userId) {
@@ -42,7 +147,7 @@ export default function Page() {
         console.log(allTrades)
         return (
             <div className="px-4 sm:px-6 lg:px-8">
-                <div className="mt-8 flow-root">
+                <div className="flow-root">
                     <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                             <table className="min-w-full">
@@ -136,8 +241,17 @@ export default function Page() {
                                                             </td>
 
                                                             <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                                                                <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                                                                    Active
+                                                                <span
+                                                                    className={classNames(
+                                                                        'inline-flex items-center rounded-md  px-2 py-1 text-xs font-medium  ring-1 ring-inset',
+                                                                        getStatusTextClasses(
+                                                                            trade
+                                                                        )
+                                                                    )}
+                                                                >
+                                                                    {getStatus(
+                                                                        trade
+                                                                    )}
                                                                 </span>
                                                             </td>
                                                             <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
@@ -162,8 +276,16 @@ export default function Page() {
                                                                     }
                                                                 </div>
                                                             </td>
-                                                            <td className="flex px-3 py-8 align-center justify-center h-full w-full">
-                                                                <ArchiveBoxXMarkIcon className="h-6 w-6 text-red-800 hover:text-red-600 cursor-pointer" />
+                                                            <td className="flex flex-col px-3 py-8 align-center justify-center h-full w-full">
+                                                                <ActionButtons
+                                                                    trade={
+                                                                        trade
+                                                                    }
+                                                                    isSeller={
+                                                                        idx ===
+                                                                        1
+                                                                    }
+                                                                />
                                                             </td>
                                                         </tr>
                                                     ))}
@@ -176,54 +298,6 @@ export default function Page() {
                     </div>
                 </div>
             </div>
-
-            // <div className="px-4 sm:px-6 lg:px-8 ">
-            //     <div className="flow-root">
-            //         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            //             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            //                 <table className="min-w-full divide-y divide-gray-300">
-            //                     <thead>
-            //                         <tr>
-            //                             <th
-            //                                 scope="col"
-            //                                 className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-            //                             >
-            //                                 Product
-            //                             </th>
-            //                             <th
-            //                                 scope="col"
-            //                                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-            //                             >
-            //                                 Status
-            //                             </th>
-            //                             <th
-            //                                 scope="col"
-            //                                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-            //                             >
-            //                                 Type
-            //                             </th>
-            //                             <th
-            //                                 scope="col"
-            //                                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-            //                             >
-            //                                 Type
-            //                             </th>
-            //                             <th
-            //                                 scope="col"
-            //                                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-            //                             >
-            //                                 Type
-            //                             </th>
-            //                         </tr>
-            //                     </thead>
-            //                     <tbody className="divide-y divide-gray-200 bg-white">
-            //
-            //                     </tbody>
-            //                 </table>
-            //             </div>
-            //         </div>
-            //     </div>
-            // </div>
         )
     }
 }
