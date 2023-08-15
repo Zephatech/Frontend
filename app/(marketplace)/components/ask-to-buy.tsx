@@ -1,7 +1,8 @@
 'use client'
 import { useAuth } from '@/app/_utils/api/auth'
-import { createTrade } from '@/app/_utils/api/trade'
+import { createTrade } from '@/app/_utils/api/trades'
 import { useMutation } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
 export default function AskToBuy({
@@ -13,7 +14,7 @@ export default function AskToBuy({
 }) {
     const { data, isLoading, isFetching } = useAuth()
     const userId = data?.userId
-
+    const router = useRouter()
     const mutation = useMutation({
         mutationFn: ({ productId }: { productId: number }) =>
             createTrade(productId),
@@ -22,6 +23,7 @@ export default function AskToBuy({
                 toast.success(
                     'Trade request created, waiting for seller to confirm'
                 )
+                router.push('/')
             } else {
                 toast.warning(data?.message)
             }

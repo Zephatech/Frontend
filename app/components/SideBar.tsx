@@ -2,7 +2,7 @@
 import Link from 'next/link'
 
 import {
-    ChartPieIcon,
+    QueueListIcon,
     Cog6ToothIcon,
     FolderIcon,
     HomeIcon,
@@ -15,7 +15,12 @@ import { classNames } from '../_utils/styles/styles'
 const navigation = [
     { name: 'Marketplace', href: '#', icon: HomeIcon, current: false },
     // { name: 'Chat', href: '#', icon: UsersIcon, current: false },
-    // { name: 'Favourite', href: '/favourite', icon: FolderIcon, current: false },
+    {
+        name: 'Trade Info',
+        href: '/trade',
+        icon: QueueListIcon,
+        current: false,
+    },
     {
         name: 'Sell',
         href: '/create-product',
