@@ -29,6 +29,7 @@
         "react-dom": "18.2.0",
         "react-hook-form": "^7.45.2",
         "react-otp-input": "^3.0.4",
+        "react-spinners": "^0.13.8",
         "react-toastify": "^9.1.3",
         "react-tooltip": "^5.19.0",
         "server-only": "^0.0.1",

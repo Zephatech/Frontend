@@ -1,16 +1,25 @@
 'use client'
-import { ExclamationTriangleIcon, PhotoIcon } from '@heroicons/react/24/solid'
+import {
+    ExclamationTriangleIcon,
+    PhotoIcon,
+    PencilIcon,
+} from '@heroicons/react/24/solid'
 import { useState, useEffect, Fragment } from 'react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
 import { useAuth } from '@/app/_utils/api/auth'
-import { useQueryClient } from '@tanstack/react-query'
+import { generateDescription } from '@/app/_utils/api/ai'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { ScaleLoader } from 'react-spinners'
 
 export default function CreateProduct() {
     const queryClient = useQueryClient()
     const router = useRouter()
     const [toxicModal, setToxicModal] = useState({ state: false, reason: '' })
+    const [autoDescriptorQuestionModal, setAutoDescriptorQuestionModal] =
+        useState(false)
+    const [autoDescriptorModal, setAutoDescriptorModal] = useState(false)
     const [previewImage, setPreviewImage] = useState('')
     const [formData, setFormData] = useState({
         name: '',
@@ -33,7 +42,22 @@ export default function CreateProduct() {
 
     const onChange = (e: any) =>
         setFormData({ ...formData, [e.target.name]: e.target.value })
-
+    const mutation = useMutation({
+        mutationFn: ({ image }: { image: string }) =>
+            generateDescription(image),
+        onSuccess: async (data) => {
+            setFormData({
+                ...formData,
+                name: data.result.title,
+                description: data.result.description,
+            })
+            setAutoDescriptorModal(false)
+        },
+        onError: () => {
+            setAutoDescriptorModal(false)
+            setToxicModal({ state: true, reason: 'image' })
+        },
+    })
     const handleSubmit = async (e: any) => {
         e.preventDefault()
         const formDataToSend = new FormData()
@@ -57,8 +81,17 @@ export default function CreateProduct() {
                 router.replace(`/products/${data.product.id}`)
                 queryClient.invalidateQueries({ queryKey: ['products'] })
             } else {
-                return res.json().then((res) => {
-                    setToxicModal({ state: true, reason: 'nah' })
+                return res.json().then((data) => {
+                    const message = data.message
+
+                    setToxicModal({
+                        state: true,
+                        reason:
+                            message ===
+                            'Product image contains sensitive content'
+                                ? 'image'
+                                : 'text',
+                    })
                 })
             }
         })
@@ -74,6 +107,7 @@ export default function CreateProduct() {
         ) {
             setPreviewImage(URL.createObjectURL(file))
             setFormData({ ...formData, image: file })
+            setAutoDescriptorQuestionModal(true)
         } else {
             toast.warning('File not supported')
             setPreviewImage('')
@@ -322,6 +356,140 @@ export default function CreateProduct() {
                                         >
                                             Acknowledged
                                         </button>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition.Root>
+            <Transition.Root show={autoDescriptorQuestionModal} as={Fragment}>
+                <Dialog
+                    as="div"
+                    className="relative z-50"
+                    onClose={() => {
+                        setAutoDescriptorQuestionModal(false)
+                    }}
+                >
+                    <Transition.Child
+                        as={Fragment}
+                        enter="transition-opacity ease-linear duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity ease-linear duration-300"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 overlay" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 z-10 overflow-y-auto">
+                        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            >
+                                <Dialog.Panel className="border-2 border-black-600 relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                                    <div className="sm:flex sm:items-start">
+                                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-black-100 sm:mx-0 sm:h-10 sm:w-10">
+                                            <PencilIcon
+                                                className="h-6 w-6 text-black-600"
+                                                aria-hidden="true"
+                                            />
+                                        </div>
+                                        <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                            <Dialog.Title
+                                                as="h3"
+                                                className="text-base font-semibold leading-6 text-gray-900"
+                                            >
+                                                Auto Description Generator
+                                            </Dialog.Title>
+                                            <div className="mt-2">
+                                                Would you like to auto-generate
+                                                description?
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-x-3">
+                                        <button
+                                            type="button"
+                                            className="mt-3 inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:mt-0 sm:w-auto"
+                                            onClick={() => {
+                                                setAutoDescriptorQuestionModal(
+                                                    false
+                                                )
+                                                setAutoDescriptorModal(true)
+                                                mutation.mutate({
+                                                    image: formData.image,
+                                                })
+                                            }}
+                                        >
+                                            Yes
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                            onClick={() => {
+                                                setAutoDescriptorQuestionModal(
+                                                    false
+                                                )
+                                            }}
+                                        >
+                                            Skip, I will fill the description
+                                            manually
+                                        </button>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition.Root>
+            <Transition.Root show={autoDescriptorModal} as={Fragment}>
+                <Dialog
+                    as="div"
+                    className="relative z-50"
+                    onClose={() => {
+                        setAutoDescriptorModal(false)
+                    }}
+                >
+                    <div className="fixed inset-0 overlay" />
+                    <div className="fixed inset-0 z-10 overflow-y-auto">
+                        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            >
+                                <Dialog.Panel className="border-2 border-black-600 relative transform overflow-hidden rounded-lg bg-white px-10 py-5 text-left shadow-xl transition-all  max-w-lg ">
+                                    <div className="flex justify-center">
+                                        <div className="mt-3 text-center ml-4 ">
+                                            <Dialog.Title
+                                                as="h3"
+                                                className="text-base font-semibold leading-6 text-gray-900"
+                                            >
+                                                Description generating in
+                                                progress
+                                            </Dialog.Title>
+                                            <div className="mt-2">
+                                                Please wait one moment...
+                                            </div>
+                                            <ScaleLoader
+                                                color="#8bf7f2"
+                                                loading={autoDescriptorModal}
+                                                aria-label="Loading Spinner"
+                                                data-testid="loader"
+                                                className="mt-2"
+                                            />
+                                        </div>
                                     </div>
                                 </Dialog.Panel>
                             </Transition.Child>
