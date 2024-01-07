@@ -27,6 +27,12 @@ const navigation = [
         icon: CurrencyDollarIcon,
         current: false,
     },
+    {
+        name: 'My Listings',
+        href: '/my-listings',
+        icon: FolderIcon,
+        current: false,
+    }
 ]
 
 export default function SideBar({
