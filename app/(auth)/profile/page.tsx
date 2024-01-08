@@ -26,11 +26,9 @@ export default function Profile() {
         const fetchUserProfile = async () => {
             try {
                 // Replace the following line with your API call to get user profile data
-                const response = await fetch(`http://localhost:3001/profile/getUserProfile`, {credentials: 'include'});
+                const response = await fetch(`http://localhost:3001/profile/getProfile`, {credentials: 'include'});
                 const data = await response.json();
 
-                console.log(data)
-                console.log(data?.phoneNumber)
                 setUserProfile({
                     firstName: data?.firstName || '',
                     lastName: data?.lastName || '',

@@ -1,6 +1,6 @@
 // MyListings.tsx
 'use client'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/app/_utils/api/auth';
@@ -12,8 +12,16 @@ const getMyListings = async () => {
   return data;
 };
 
+type Listing = {
+  id: number;
+  name: string;
+  category: string;
+  image: string;
+};
+
 const MyListings = () => {
-  const { data: sellListings, isLoading, error } = useQuery(['sellListings'], () => getMyListings());
+  const [sellListings, setSellListings] = useState<Listing[]>([]); 
+  const { data: sellListingsData, isLoading, error } = useQuery(['sellListings'], () => getMyListings());
   const { data, isLoading: authLoading, isFetching: authFetching } = useAuth();
   const router = useRouter();
 
@@ -22,7 +30,10 @@ const MyListings = () => {
     if (!authLoading && !authFetching && !data?.userId) {
       router.replace('/login?unauthenticated');
     }
-  }, [authLoading, authFetching, data]);
+    if (!isLoading){
+      setSellListings(sellListingsData);
+    }
+  }, [authLoading, authFetching, data, isLoading]);
 
   useEffect(() => {
     // You can perform additional actions here if needed
@@ -92,28 +103,3 @@ const MyListings = () => {
 };
 
 export default MyListings;
-
-// {sellListings.map((listing) => (
-//   <tr key={listing.id} className="border-t border-gray-200">
-//     <td className="py-2 px-4">
-//       <img
-//         className="h-10 w-10 object-cover rounded"
-//         src={listing.image || 'placeholder-image-url'}
-//         alt="Listing Image"
-//       />
-//     </td>
-//     <td className="py-2 px-4">{listing.name}</td>
-//     <td className="py-2 px-4">{listing.category}</td>
-//     <td className="py-2 px-4">
-//       <Link href={`/modify-listing/${listing.id}`}>
-//         <div className="text-blue-600 hover:underline mr-2">Modify</div>
-//       </Link>
-//       <button
-//         className="text-red-600 hover:underline"
-//         onClick={() => handleDelete(listing.id)}
-//       >
-//         Delete
-//       </button>
-//     </td>
-//   </tr>
-// ))}
