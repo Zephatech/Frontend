@@ -16,7 +16,6 @@ export default function ProfileDropdown() {
         queryFn: getCurrentUserId,
     })
 
-    console.log(data)
     const userId = data?.userId
     const name = data?.name
     const mutation = useMutation({

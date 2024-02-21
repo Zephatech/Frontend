@@ -1,6 +1,7 @@
 'use client'
-
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -8,15 +9,17 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Product, deleteProduct, getProducts } from '../_utils/api/products'
 import { useAuth } from '../_utils/api/auth'
 
+
 export default function Page() {
     const [products, setProducts] = useState<Product[]>()
+
     const queryClient = useQueryClient()
-    const { data, isLoading, isFetching } = useQuery({
-        queryKey: ['products'],
-        queryFn: getProducts,
-    })
+    const searchKey = useSearchParams().get('search')
+    
+    const { data, isLoading, isFetching } = useQuery({ queryKey: ['products', searchKey], queryFn: ({queryKey}) => getProducts(queryKey[1])})
     const { data: authData, isLoading: authIsLoading } = useAuth()
     const userId = authData?.userId
+    
     const mutation = useMutation({
         mutationFn: ({ id }: { id: number }) => deleteProduct(id),
         onSuccess: (data) => {
@@ -40,11 +43,9 @@ export default function Page() {
 
     if (isLoading || authIsLoading) {
         return <h1>Loading...</h1>
-    }
-    if (!products && !isFetching) {
+    } else if (!products && !isFetching) {
         return <h1>No Products yet</h1>
-    }
-    if (products) {
+    } else if (products) {
         return (
             <>
                 {/* Product List */}
@@ -80,27 +81,6 @@ export default function Page() {
                                         <p className="text-base font-medium text-gray-900">
                                             {product.price}
                                         </p>
-                                        {userId == product.ownerId && (
-                                            <div>
-                                                <button
-                                                    onClick={() =>
-                                                        mutation.mutate({
-                                                            id: product.id,
-                                                        })
-                                                    }
-                                                    className="bg-transparent mr-2 hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-2 border border-red-500 hover:border-transparent rounded"
-                                                >
-                                                    remove
-                                                </button>
-                                                <Link
-                                                    href={`/update-product?id=${product.id}`}
-                                                >
-                                                    <button className="bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-1 px-2 border border-gray-500 hover:border-transparent rounded">
-                                                        modify
-                                                    </button>
-                                                </Link>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </div>
