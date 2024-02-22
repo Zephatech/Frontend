@@ -1,32 +1,13 @@
 'use client'
 import Link from 'next/link'
-
-import {
-    QueueListIcon,
-    Cog6ToothIcon,
-    FolderIcon,
-    HomeIcon,
-    CurrencyDollarIcon,
-    InformationCircleIcon,
-    PlusIcon,
-} from '@heroicons/react/24/outline'
+import { QueueListIcon, FolderIcon, HomeIcon, CurrencyDollarIcon, InformationCircleIcon } from '@heroicons/react/24/outline'
 import { classNames } from '../_utils/styles/styles'
 
 const navigation = [
     { name: 'Marketplace', href: '#', icon: HomeIcon, current: false },
-    // { name: 'Chat', href: '#', icon: UsersIcon, current: false },
-    {
-        name: 'Trade Info',
-        href: '/trade',
-        icon: QueueListIcon,
-        current: false,
-    },
-    {
-        name: 'Sell',
-        href: '/create-product',
-        icon: CurrencyDollarIcon,
-        current: false,
-    },
+    { name: 'Trade Info', href: '/trade', icon: QueueListIcon, current: false },
+    { name: 'Sell', href: '/create-product', icon: CurrencyDollarIcon, current: false },
+    { name: 'My Listings', href: '/my-listings', icon: FolderIcon, current: false },
 ]
 
 export default function SideBar({
@@ -84,7 +65,7 @@ export default function SideBar({
 
                     <li className="mt-auto">
                         <a
-                            href="#"
+                            href="/terms-and-conditions"
                             className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
                         >
                             <InformationCircleIcon
@@ -92,16 +73,6 @@ export default function SideBar({
                                 aria-hidden="true"
                             />
                             About Us
-                        </a>
-                        <a
-                            href="#"
-                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
-                        >
-                            <Cog6ToothIcon
-                                className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
-                                aria-hidden="true"
-                            />
-                            Settings
                         </a>
                     </li>
                 </ul>

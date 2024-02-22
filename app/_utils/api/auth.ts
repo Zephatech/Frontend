@@ -80,7 +80,6 @@ export const useAuth = () => {
 }
 
 /* Potentially useful for server side get auth */
-
 // import { cookies } from 'next/headers'
 // export default async function getCurrentUserId() {
 //     const res = await fetch('http://localhost:3001/auth/getCurrentUserId', {

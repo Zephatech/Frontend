@@ -1,13 +1,24 @@
 import { attachStatus } from '.'
 
-export const getProducts = async () => {
-    const res = await fetch('http://localhost:3001/products', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    return attachStatus(res)
+export const getProducts = async (query: String | null) => {
+    if(query === null)  {
+        const res = await fetch(`http://localhost:3001/products`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        return attachStatus(res)
+    } else {
+        const res = await fetch(`http://localhost:3001/products?q=${query}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        return attachStatus(res)
+    }
+    
 }
 
 export const deleteProduct = async (id: number) => {
