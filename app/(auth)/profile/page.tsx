@@ -1,13 +1,11 @@
 'use client'
 import { useState, useEffect, ChangeEvent} from 'react'
 
-
 interface UserProfile {
     firstName?: string;
     lastName?: string;
     phone?: string;
     facebook?: string;
-    // Add other fields as needed
 }
 
 export default function Profile() {
@@ -20,7 +18,6 @@ export default function Profile() {
         facebook: '',
     });
 
-    
     useEffect(() => {
         // Fetch user profile data based on userId
         const fetchUserProfile = async () => {
@@ -29,8 +26,6 @@ export default function Profile() {
                 const response = await fetch(`http://localhost:3001/profile/getProfile`, {credentials: 'include'});
                 const data = await response.json();
 
-                console.log(data)
-                console.log(data?.phoneNumber)
                 setUserProfile({
                     firstName: data?.firstName || '',
                     lastName: data?.lastName || '',
@@ -67,7 +62,6 @@ export default function Profile() {
 
     const handleSaveClick = async () => {
         try {
-
             const response = await fetch(`http://localhost:3001/profile/updateProfile`, {
                 method: 'PUT',
                 headers: {
@@ -100,83 +94,124 @@ export default function Profile() {
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-         
     return (
         <>
             <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6 sm:py-6 lg:max-w-7xl lg:px-8">
                 <h1 className="text-xl font-semibold text-indigo-600">My Profile</h1>
-                <div className="mt-6">
-                <p className="text-sm font-medium leading-5 text-gray-900">
-                    First Name: {editMode ? (
-                        <input
-                            type="text"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleInputChange}
-                        />
-                    ) : userProfile?.firstName}
-                </p>
-
-                <p className="text-sm font-medium leading-5 text-gray-900">
-                    Last Name: {editMode ? (
-                        <input
-                            type="text"
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleInputChange}
-                        />
-                    ) : userProfile?.lastName}
-
-                </p>
-
-                <p className="text-sm font-medium leading-5 text-gray-900">
-                    Phone: {editMode ? (
-                        <input
-                            type="text"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                        />
-                    ) : userProfile?.phone}
-                </p>
-
-                <p className="text-sm font-medium leading-5 text-gray-900">
-                    Facebook: {editMode ? (
-                        <input
-                            type="text"
-                            name="facebook"
-                            value={formData.facebook}
-                            onChange={handleInputChange}
-                        />
-                    ) : userProfile?.facebook}
-                </p>
-
-
-                {editMode ? (
-                    <div className="mt-4">
-                        <button
-                            onClick={handleSaveClick}
-                            className="primary-btn mr-2"
-                        >
-                            Save
-                        </button>
-                        <button
-                            onClick={handleCancelClick}
-                            className="secondary-btn mr-2"
-                        >
-                            Cancel
-                        </button>
+                <div className="mt-6 space-y-4">
+                    {/* First Name */}
+                    <div className="flex items-center">
+                        <p className="text-sm font-medium leading-5 text-gray-900">
+                            First Name: 
+                        </p>
+                        {editMode ? (
+                            <input
+                                type="text"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleInputChange}
+                                className="ml-2 px-2 py-1 border rounded"
+                            />
+                        ) : (
+                            <p className="ml-2 text-sm font-medium leading-5 text-gray-900">
+                                {userProfile?.firstName}
+                            </p>
+                        )}
                     </div>
-                ) : (
-                    <button
-                        onClick={handleEditClick}
-                        className="primary-btn mt-4"
-                    >
-                        Edit Profile
-                    </button>
-                )}
-            </div>
+
+                    {/* Last Name */}
+                    <div className="flex items-center">
+                        <p className="text-sm font-medium leading-5 text-gray-900">
+                            Last Name: 
+                        </p>
+                        {editMode ? (
+                            <input
+                                type="text"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleInputChange}
+                                className="ml-2 px-2 py-1 border rounded"
+                            />
+                        ) : (
+                            <p className="ml-2 text-sm font-medium leading-5 text-gray-900">
+                                {userProfile?.lastName}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Phone */}
+                    <div className="flex items-center">
+                        <p className="text-sm font-medium leading-5 text-gray-900">
+                            Phone: 
+                        </p>
+                        {editMode ? (
+                            <input
+                                type="text"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleInputChange}
+                                className="ml-2 px-2 py-1 border rounded"
+                            />
+                        ) : (
+                            <p className="ml-2 text-sm font-medium leading-5 text-gray-900">
+                                {userProfile?.phone}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Facebook */}
+                    <div className="flex items-center">
+                        <p className="text-sm font-medium leading-5 text-gray-900">
+                            Facebook: 
+                        </p>
+                        {editMode ? (
+                            <input
+                                type="text"
+                                name="facebook"
+                                value={formData.facebook}
+                                onChange={handleInputChange}
+                                className="ml-2 px-2 py-1 border rounded"
+                            />
+                        ) : (
+                            <a href={userProfile?.facebook} className="ml-2 text-sm font-medium leading-5 text-gray-900">
+                                {userProfile?.facebook}
+                            </a>
+                        )}
+                    </div>
+
+                    {/* Edit and Save buttons */}
+                    <div>
+                        {editMode ? (
+                            <>
+                                <div className="mt-4 space-x-2">
+                                    <button
+                                        onClick={handleSaveClick}
+                                        className="mt-3 primary-btn"
+                                    >
+                                        Save
+                                    </button>
+                                </div>
+                                <div className="mt-4 space-x-2">
+                                    <button
+                                        onClick={handleCancelClick}
+                                        className="mt-3 primary-btn"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <button
+                                onClick={handleEditClick}
+                                className="primary-btn mt-4"
+                            >
+                                Edit Profile
+                            </button>
+                        )}
+                    </div>
+                </div>
             </div>
         </>
+
     )
 }
