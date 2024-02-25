@@ -8,11 +8,8 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 
 type FormValues = {
-    firstName: string
-    lastName: string
     email: string
     password: string
-    agreeTOS: boolean
 }
 
 export default function Login() {
@@ -21,7 +18,6 @@ export default function Login() {
     const userId = data?.userId
 
     const searchParams = useSearchParams()
-
     useEffect(() => {
         if (searchParams.has('unauthenticated')) {
             toast.error('You are not logged in yet') // Display the toast message
@@ -37,7 +33,6 @@ export default function Login() {
             password: string
         }) => login(email, password),
         onSuccess: (data) => {
-            console.log(data)
             if (data.success) {
                 toast.success('Logged in')
                 router.replace(`/`)
@@ -60,10 +55,6 @@ export default function Login() {
         })
     }
 
-    const onError = (errors: FieldErrors<FormValues>) => {
-        console.log('Form Errors', errors)
-    }
-
     if (userId || isLoading) {
         if (userId) {
             toast.info('Already logged in, redirected to homepage')
@@ -75,22 +66,18 @@ export default function Login() {
     return (
         <>
             <div className="flex flex-col items-center mt-20">
-                <h1 className="text-xl text-indigo-600 font-semibold text-center">
-                    Log in to your account
-                </h1>
+                <h1 className="text-xl text-indigo-600 font-semibold text-center">Log in to your account</h1>
                 <div className="w-[25rem] mt-7">
                     <form
                         className="space-y-5"
-                        onSubmit={handleSubmit(onSubmit, onError)}
+                        onSubmit={handleSubmit(onSubmit, () => {})}
                         noValidate
                     >
                         <div>
                             <input
                                 id="email"
                                 type="email"
-                                {...register('email', {
-                                    required: 'Email is required',
-                                })}
+                                {...register('email', { required: 'Email is required' })}
                                 placeholder="UWaterloo Email Address"
                                 className="input-field"
                             />
@@ -115,7 +102,7 @@ export default function Login() {
                         <div className="!mt-3">
                             <div className="text-sm">
                                 <a
-                                    href="#"
+                                    href="/forgot-password"
                                     className="font-semibold text-indigo-600 hover:text-indigo-500"
                                 >
                                     Forgot password?
