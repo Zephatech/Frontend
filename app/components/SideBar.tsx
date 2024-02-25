@@ -1,12 +1,13 @@
 'use client'
 import Link from 'next/link'
-import { QueueListIcon, FolderIcon, HomeIcon, CurrencyDollarIcon, InformationCircleIcon } from '@heroicons/react/24/outline'
+import { QueueListIcon, FolderIcon, HomeIcon, CurrencyDollarIcon, InformationCircleIcon, BellIcon } from '@heroicons/react/24/outline'
 import { classNames } from '../_utils/styles/styles'
 
 const navigation = [
     { name: 'Marketplace', href: '#', icon: HomeIcon, current: false },
     { name: 'Trade Info', href: '/trade', icon: QueueListIcon, current: false },
     { name: 'Sell', href: '/create-product', icon: CurrencyDollarIcon, current: false },
+    { name: "Message", href: '/message', icon: BellIcon, current: false },
     { name: 'My Listings', href: '/my-listings', icon: FolderIcon, current: false },
 ]
 
