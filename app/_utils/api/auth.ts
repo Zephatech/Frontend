@@ -79,6 +79,45 @@ export const useAuth = () => {
     })
 }
 
+export const requestResetPassword = async (email: string) => {
+    console.log(email)
+    const res = await fetch('http://localhost:3001/auth/requestResetPassword', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const data = await res.json()
+    if (res.ok) {
+        data.success = true
+    } else {
+        data.success = false
+    }
+    return data
+}
+
+export const resetPassword = async (
+    email: string,
+    verificationCode: string,
+    newPassword: string
+) => {
+    const res = await fetch('http://localhost:3001/auth/resetPassword', {
+        method: 'POST',
+        body: JSON.stringify({ email, verificationCode, newPassword }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const data = await res.json()
+    if (res.ok) {
+        data.success = true
+    } else {
+        data.success = false
+    }
+    return data
+}
+
 /* Potentially useful for server side get auth */
 // import { cookies } from 'next/headers'
 // export default async function getCurrentUserId() {
