@@ -2,10 +2,26 @@
 import { useState, useEffect, useRef } from 'react'
 import { toast } from 'react-toastify'
 import { create } from "zustand";
-import { PaperAirplaneIcon, UserCircleIcon } from '@heroicons/react/24/outline'
+import { UserCircleIcon } from '@heroicons/react/24/outline'
+import { useAuth } from '../_utils/api/auth'
+import { useRouter } from 'next/navigation'
 
 
 export default function MessagePage() {
+	const router = useRouter()
+	const {
+        data: authData,
+        isLoading: authIsLoading,
+        isFetching: authIsFetching,
+    } = useAuth()
+	const userId = authData?.userId
+	useEffect(() => {
+		console.log(authIsLoading, authIsFetching, userId)
+        if (!authIsLoading && !userId) {
+            router.replace('/login?unauthenticated')
+        }
+    }, [authIsLoading])
+
     return (
         <>  
             <div className='flex h-full overflow-hidden bg-gray-50 rounded-lg'>
@@ -16,9 +32,10 @@ export default function MessagePage() {
 	);
 }
 
-
 const Sidebar = () => {
     const { loading, conversations } = useGetConversations();
+
+	console.log(conversations)
 
 	return (
 		<div className='border-r border-bg-gray-300 p-4 flex flex-col flex-grow '>
@@ -27,9 +44,8 @@ const Sidebar = () => {
                     console.log(conversation)
                     return (
                         <Conversation
-                            key={conversation._id}
+                            key={conversation.id}
                             conversation={conversation}
-            
                             lastIdx={idx === conversations.length - 1}
                         />
                     )
@@ -55,7 +71,7 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
                 </div>
 				<div className='flex flex-col flex-1'>
 					<div className='flex gap-3 justify-between'>
-						<p>{conversation.fullName}</p>
+						<p>{conversation.users[0].firstName + " " + conversation.users[0].lastName}</p>
 					</div>
 				</div>
 			</div>
@@ -73,23 +89,25 @@ const useGetConversations = () => {
 	useEffect(() => {
 		const getConversations = async () => {
 			setLoading(true);
-			// try {
-			// 	const res = await fetch("/api/users");
-			// 	const data = await res.json();
-			// 	if (data.error) {
-			// 		throw new Error(data.error);
-			// 	}
-			// 	setConversations(data);
-			// } catch (error) {
-			// 	toast.error(error.message);
-			// } finally {
-			// 	setLoading(false);
-			// }
-            setConversations([
-                { _id: 1, fullName: 'name1'},
-                { _id: 2, fullName: 'name2'},
-                { _id: 3, fullName: 'name3'}
-            ]);
+			try {
+				const data = await fetch('http://localhost:3001/conversation', {
+					credentials: 'include',
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}).then((res) => res.json())
+
+				if (!Array.isArray(data)) {
+					throw new Error(data.message);
+				}
+
+				setConversations(data); // Explicitly specify the type as any[]
+			} catch (error: any) {
+				toast.error(error.message);
+			} finally {
+				setLoading(false);
+			}
 		};
 		getConversations();
 	}, []);
@@ -154,17 +172,18 @@ const useSendMessage = () => {
 	const sendMessage = async (message) => {
 		setLoading(true);
 		try {
-			// const res = await fetch(`/api/messages/send/${selectedConversation._id}`, {
-			// 	method: "POST",
-			// 	headers: {
-			// 		"Content-Type": "application/json",
-			// 	},
-			// 	body: JSON.stringify({ message }),
-			// });
-			// const data = await res.json();
-			// if (data.error) throw new Error(data.error);
+			const res = await fetch(`http://localhost:3001/message/send/${selectedConversation.id}`, {
+				method: "POST",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ message }),
+			});
+			const data = await res.json();
+			if (data.error) throw new Error(data.error);
 
-			// setMessages([...messages, data]);
+			setMessages([...messages, data]);
 		} catch (error) {
 			toast.error(error.message);
 		} finally {
@@ -212,14 +231,27 @@ const useGetMessages = () => {
 		const getMessages = async () => {
 			setLoading(true);
 			try {
-				// const res = await fetch(`/api/messages/${selectedConversation._id}`);
-				// const data = await res.json();
-				// if (data.error) throw new Error(data.error);
-				setMessages([
-                    { _id: 1, message: 'message1', senderId: 1, createdAt: new Date().toISOString() },
-                    { _id: 2, message: 'message2', senderId: 2, createdAt: new Date().toISOString() },
-                    { _id: 3, message: 'message3', senderId: 3, createdAt: new Date().toISOString() }
-                ]);
+				const data = await fetch(`http://localhost:3001/message/${selectedConversation?.id}`, {
+					credentials: 'include',
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}).then((res) => res.json())
+
+				console.log(data)
+				const transformedData = data.map((message) => {
+					return {
+						_id: message.id,
+						message: message.content,
+						senderId: message.sender.id,
+						createdAt: message.timestamp,
+					};
+				})
+
+				console.log(transformedData)
+
+				setMessages(transformedData);
 			} catch (error) {
 				toast.error(error.message);
 			} finally {
@@ -227,8 +259,8 @@ const useGetMessages = () => {
 			}
 		};
 
-		if (selectedConversation?._id) getMessages();
-	}, [selectedConversation?._id, setMessages]);
+		if (selectedConversation?.id) getMessages();
+	}, [selectedConversation?.id, setMessages]);
 
 	return { messages, loading };
 };
@@ -275,7 +307,7 @@ function padZero(number) {
 
 const Message = ({ message }) => {
 	// const { authUser } = useAuthContext();
-    const authUser = { _id: 1 }
+    const authUser = { _id: 2 }
 	const { selectedConversation } = useConversation();
 	const fromMe = message.senderId === authUser._id;
 	const formattedTime = extractTime(message.createdAt);
@@ -313,58 +345,3 @@ const MessageSkeleton = () => {
 		</>
 	);
 };
-
-// export default function Message() {
-//     const [openConversationId, setOpenConversationId] = useState(null);
-
-//     const handleConversationClick = (conversationId: number) => {
-//         setOpenConversationId(conversationId);
-//     };
-//     const handleCloseDialog = () => {
-//         setOpenConversationId(null);
-//     }
-
-//     const conversations = [
-//         { id: 1, name: 'name1'},
-//         { id: 2, name: 'name2'},
-//         { id: 3, name: 'name3'},
-//       ];
-
-      
-//     return (
-//         <div>
-//             <h1>Chats</h1>
-//             {
-//                 openConversationId == null?
-//                 ( <ConversationList conversations={conversations} onConversationClick={handleConversationClick} />) 
-//                 :(
-//                     <ConversationDialog conversationId={openConversationId} onClose={handleCloseDialog} />
-//                 )
-//             }
-//         </div>
-//     )
-// }
-
-
-// function ConversationList({ conversations, onConversationClick } : { conversations: any, onConversationClick: any }) {
-//     return (
-//         <ul>
-//             {conversations.map((conversation) => (
-//                 <li key={conversation.id} onClick={() => onConversationClick(conversation.id)}>
-//                     {conversation.name}
-//                 </li>
-//             ))}
-//         </ul>
-//     )
-// }
-
-// function ConversationDialog({ conversationId, onClose }) {
-//     // const { data: conversation } = useQuery(['conversation', conversationId], getConversation)
-
-//     return (
-//         <div>
-//             <h2>{conversationId}</h2>
-//             <button onClick={onClose}>Close</button>
-//         </div>
-//     )
-// }
