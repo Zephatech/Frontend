@@ -30,6 +30,7 @@ export const deleteProduct = async (id: number) => {
 }
 
 export type Product = {
+    options: null | { course: string },
     id: number
     ownerId: number
     name: string

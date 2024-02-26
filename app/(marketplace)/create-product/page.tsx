@@ -27,6 +27,7 @@ export default function CreateProduct() {
         price: 0,
         category: 'Textbook',
         image: '',
+        course: '',
     })
 
     const { data, isLoading, isFetching } = useAuth()
@@ -38,7 +39,7 @@ export default function CreateProduct() {
         }
     }, [isLoading, isFetching, userId])
 
-    const { name, description, price, category, image } = formData
+    const { name, description, price, category, image, course } = formData
 
     const onChange = (e: any) =>
         setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -69,6 +70,10 @@ export default function CreateProduct() {
         formDataToSend.append('price', formData.price.toString())
         formDataToSend.append('description', formData.description)
         formDataToSend.append('category', formData.category)
+        if (formData.category === 'Textbook' && formData.course !== '') {
+            formDataToSend.append('options', JSON.stringify({ course: formData.course.replace(/\s/g, "") })) // remove all space
+        }
+
         await fetch('http://localhost:3001/products', {
             method: 'POST',
             body: formDataToSend,
@@ -260,6 +265,28 @@ export default function CreateProduct() {
                         </select>
                     </div>
                 </div>
+
+                {
+                    category === 'Textbook' && (
+                        <div className="">
+                            <label
+                                htmlFor="course"
+                                className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                                Course
+                            </label>
+                            <input
+                                type="text"
+                                name="course"
+                                id="course"
+                                value={course}
+                                onChange={onChange}
+                                className="input-field"
+                                placeholder="e.g. ECE 105"
+                            />
+                        </div>
+                    )
+                }
 
                 <div className="mt-6 flex items-center justify-end gap-x-6">
                     <button

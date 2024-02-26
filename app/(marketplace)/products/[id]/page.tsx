@@ -14,6 +14,8 @@ const getProductData = async (id: number) => {
 
 export default async function Page({ params }: { params: { id: number } }) {
     const product = (await getProductData(params.id)) as unknown as Product
+    const showCourseLink = product.options !== null && product.options?.course;
+
     console.log(product)
     return (
         <>
@@ -58,6 +60,19 @@ export default async function Page({ params }: { params: { id: number } }) {
                                     Good Seller Rating
                                 </p>
                             </div>
+                            
+                            {showCourseLink && (
+                                <div className="mt-6 flex items-center">
+                                    <a
+                                        href={`https://uwflow.com/course/${showCourseLink}`}
+                                        className="text-sm text-blue-500 hover:text-blue-700"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Related courses on UWFlow
+                                    </a>
+                                </div>
+                            )}
                         </section>
                     </div>
                     <div className="mt-10 md:col-start-2 md:row-span-2 md:mt-0 md:self-center">
