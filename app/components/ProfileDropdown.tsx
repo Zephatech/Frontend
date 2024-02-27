@@ -1,13 +1,14 @@
 'use client'
 import Link from 'next/link'
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { getCurrentUserId, logout } from '../_utils/api/auth'
+import { getCurrentUserId, logout as logoutBackend} from '../_utils/api/auth'
 import { classNames } from '../_utils/styles/styles'
+import  useAuthStore  from '../stores/authStore'
 
 const AuthLinks = () => (
     <p className="text-sm">
@@ -17,16 +18,29 @@ const AuthLinks = () => (
 )
 
 const ProfileDropdown = () => {
+    const { userId, name, isLoading, isError, login, logout } = useAuthStore();
     const queryClient = useQueryClient()
-    const { data, isLoading, isError } = useQuery({ queryKey: ['auth'], queryFn: getCurrentUserId })
 
-    const userId = data?.userId
-    const name = data?.name
-    const mutation = useMutation({ mutationFn: logout, onSuccess: () => queryClient.invalidateQueries({ queryKey: ['auth'] }) })    
+    // only request the user data once
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await queryClient.fetchQuery({ queryKey: ['auth'], queryFn: getCurrentUserId })
+            if (data?.userId) {
+                login(data.userId, data.name);
+            }
+        };
+
+        fetchData();
+    },[]);
+    
+    const hanldeLogout = async () => {
+        logout();
+        await logoutBackend();
+        queryClient.invalidateQueries({ queryKey: ['auth'] });
+    }
 
     if (isLoading) return null
     if (isError || !userId) return <AuthLinks />
-
     return (
         <Menu as="div" className="relative">
             <Menu.Button className="-m-1.5 flex items-center p-1.5">
@@ -46,7 +60,7 @@ const ProfileDropdown = () => {
                     </Menu.Item>
                     <Menu.Item key="Log out">
                         {({ active }) => (
-                            <a href="/" className={classNames(active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-gray-900')} onClick={() => mutation.mutate()}>Log out</a>
+                            <a href="/" className={classNames(active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-gray-900')} onClick={hanldeLogout}>Log out</a>
                         )}
                     </Menu.Item>
                 </Menu.Items>
