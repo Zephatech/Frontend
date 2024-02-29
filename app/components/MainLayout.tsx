@@ -1,5 +1,5 @@
 'use client'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { ToastContainer } from 'react-toastify'
 
 import { Dialog, Transition } from '@headlessui/react'
@@ -9,12 +9,33 @@ import ProfileDropdown from './ProfileDropdown'
 import SearchBar from './SearchBar'
 import SideBar from './SideBar'
 
-export default function MainLayout({
-    children,
-}: {
-    children: React.ReactNode
-}) {
+import { useQueryClient } from '@tanstack/react-query'
+import { getCurrentUserId } from '../_utils/api/auth'
+import useAuthStore from '../stores/authStore'
+
+export default function MainLayout({ children }: { children: React.ReactNode}) {
+    const { isLoading, login, failToLogin } = useAuthStore();
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const queryClient = useQueryClient()
+
+    // Check if user has been logged in
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await queryClient.fetchQuery({ queryKey: ['auth'], queryFn: getCurrentUserId })
+            if (data?.userId) {
+                login(data.userId, data.name);
+            } else {
+                failToLogin();
+            }
+        };
+
+        fetchData();
+    },[]);
+
+    // If user info is still loading, return null
+    if(isLoading){
+        return null
+    }
 
     return (
         <div className="h-full">

@@ -1,40 +1,19 @@
 'use client'
 import Link from 'next/link'
-import { Fragment, useEffect } from 'react'
+import { Fragment } from 'react'
 
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useQueryClient } from '@tanstack/react-query'
 
-import { getCurrentUserId, logout as logoutBackend} from '../_utils/api/auth'
+import { logout as logoutBackend} from '../_utils/api/auth'
 import { classNames } from '../_utils/styles/styles'
 import  useAuthStore  from '../stores/authStore'
 
-const AuthLinks = () => (
-    <p className="text-sm">
-        <Link href="/register" className="text-indigo-600 hover:text-indigo-400">Register</Link> or{' '}
-        <Link href="/login" className="text-indigo-600 hover:text-indigo-400">Log in</Link>
-    </p>
-)
-
 const ProfileDropdown = () => {
-    const { userId, name, isLoading, isValidUser, login, logout, failToLogin } = useAuthStore();
+    const { userId, name, isLoading, isValidUser, logout } = useAuthStore();
     const queryClient = useQueryClient()
 
-    // only request the user data once
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await queryClient.fetchQuery({ queryKey: ['auth'], queryFn: getCurrentUserId })
-            if (data?.userId) {
-                login(data.userId, data.name);
-            } else {
-                failToLogin();
-            }
-        };
-
-        fetchData();
-    },[]);
-    
     const hanldeLogout = async () => {
         logout();
         await logoutBackend();
@@ -74,5 +53,12 @@ const ProfileDropdown = () => {
         )
     }
 }
+
+const AuthLinks = () => (
+    <p className="text-sm">
+        <Link href="/register" className="text-indigo-600 hover:text-indigo-400">Register</Link> or{' '}
+        <Link href="/login" className="text-indigo-600 hover:text-indigo-400">Log in</Link>
+    </p>
+)
 
 export default ProfileDropdown

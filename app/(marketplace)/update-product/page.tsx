@@ -5,10 +5,10 @@ import { useState, useEffect, Fragment } from 'react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
-import { useAuth } from '@/app/_utils/api/auth'
 import { useQueryClient } from '@tanstack/react-query'
+import WithAuth from '../../components/withAuth'
 
-export default function UpdateProduct() {
+function UpdateProduct() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const productId = searchParams.get('id')
@@ -48,15 +48,6 @@ export default function UpdateProduct() {
 
     const queryClient = useQueryClient()
     const [toxicModal, setToxicModal] = useState(false)
-
-    const { data, isLoading, isFetching } = useAuth()
-    const userId = data?.userId
-
-    useEffect(() => {
-        if (!isLoading && !isFetching && !userId) {
-            router.replace('/login?unauthenticated')
-        }
-    }, [isLoading, isFetching, userId])
 
     const { name, description, price, category, image } = formData
 
@@ -110,9 +101,7 @@ export default function UpdateProduct() {
             setFormData({ ...formData, image: '' })
         }
     }
-    if (!userId) {
-        return <p>Loading...</p>
-    }
+
     return (
         <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6 sm:py-6 lg:max-w-7xl lg:px-8">
             <h1 className="text-xl font-semibold text-indigo-600">
@@ -340,3 +329,5 @@ export default function UpdateProduct() {
         </div>
     )
 }
+
+export default WithAuth(UpdateProduct)

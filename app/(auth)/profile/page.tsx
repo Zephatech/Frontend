@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, ChangeEvent} from 'react'
+import withAuth from '../../components/withAuth';
 
 interface UserProfile {
     firstName?: string;
@@ -8,7 +9,7 @@ interface UserProfile {
     facebook?: string;
 }
 
-export default function Profile() {
+ function Profile() {
     const [editMode, setEditMode] = useState(false);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [formData, setFormData] = useState<UserProfile>({
@@ -215,3 +216,6 @@ export default function Profile() {
 
     )
 }
+
+
+export default withAuth(Profile)

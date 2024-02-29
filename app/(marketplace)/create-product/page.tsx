@@ -8,17 +8,17 @@ import { useState, useEffect, Fragment } from 'react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
-import { useAuth } from '@/app/_utils/api/auth'
 import { generateDescription } from '@/app/_utils/api/ai'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { ScaleLoader } from 'react-spinners'
+import useAuthStore from '@/app/stores/authStore'
+import WithAuth from '@/app/components/withAuth'
 
-export default function CreateProduct() {
+function CreateProduct() {
     const queryClient = useQueryClient()
     const router = useRouter()
     const [toxicModal, setToxicModal] = useState({ state: false, reason: '' })
-    const [autoDescriptorQuestionModal, setAutoDescriptorQuestionModal] =
-        useState(false)
+    const [autoDescriptorQuestionModal, setAutoDescriptorQuestionModal] = useState(false)
     const [autoDescriptorModal, setAutoDescriptorModal] = useState(false)
     const [previewImage, setPreviewImage] = useState('')
     const [formData, setFormData] = useState({
@@ -29,15 +29,7 @@ export default function CreateProduct() {
         image: '',
         course: '',
     })
-
-    const { data, isLoading, isFetching } = useAuth()
-    const userId = data?.userId
-
-    useEffect(() => {
-        if (!isLoading && !isFetching && !userId) {
-            router.replace('/login?unauthenticated')
-        }
-    }, [isLoading, isFetching, userId])
+    const { userId } = useAuthStore();
 
     const { name, description, price, category, image, course } = formData
 
@@ -532,3 +524,5 @@ export default function CreateProduct() {
         </div>
     )
 }
+
+export default WithAuth(CreateProduct)

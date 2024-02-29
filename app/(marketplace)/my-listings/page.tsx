@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import useAuthStore from '@/app/stores/authStore';
+import WithAuth from '@/app/components/withAuth';
 
 const getMyListings = async () => {
   const response = await fetch(`http://localhost:3001/products/myListings`, { credentials: 'include' });
@@ -21,18 +21,14 @@ type Listing = {
 
 const MyListings = () => {
   const [sellListings, setSellListings] = useState<Listing[]>([]);
-  const { isValidUser, isLoading : isAuthLoading} = useAuthStore();
-  const { data: sellListingsData, isLoading, error } = useQuery(['sellListings'], () => () => isValidUser ? getMyListings() : null);
-  const router = useRouter();
+  const { isValidUser } = useAuthStore();
+  const { data: sellListingsData, isLoading, error } = useQuery(['sellListings'], () => isValidUser ? getMyListings() : null);
 
   useEffect(() => {
-    console.log(isValidUser, isAuthLoading)
-    if (isValidUser === false && isAuthLoading === false) {
-      router.replace('/login?unauthenticated');
-    } else if (!isLoading && Array.isArray(sellListingsData)) {
+    if (!isLoading && Array.isArray(sellListingsData)) {
       setSellListings(sellListingsData);
     }
-  }, [isLoading, isAuthLoading]);
+  }, [isLoading]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -90,4 +86,4 @@ const MyListings = () => {
   }
 };
 
-export default MyListings;
+export default WithAuth(MyListings);
