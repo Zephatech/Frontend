@@ -1,10 +1,13 @@
 'use client'
+import { useEffect, useState } from 'react'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 export default function SearchBar() {
     const router = useRouter()
+    const pathname = usePathname();
+    const searchOnLink = useSearchParams().get('search');
+
     const [searchKey, setSearchKey] = useState('');
 
     const handleSubmit = (event: { preventDefault: () => void }) => {
@@ -16,8 +19,16 @@ export default function SearchBar() {
         setSearchKey(event.target.value);
     }
 
+    useEffect(() => {
+        if(searchOnLink === null){
+            setSearchKey('')
+        }else {
+            setSearchKey(searchOnLink)
+        }
+    }, [searchOnLink, pathname]); // Trigger when router path changes
+
     return (
-        <form className="relative flex flex-1" method="GET" onSubmit={handleSubmit} >
+        <form className="relative flex flex-1" onSubmit={handleSubmit} >
             <label htmlFor="search-field" className="sr-only"> Search </label>
             <MagnifyingGlassIcon className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400" aria-hidden="true"/>
             <input
