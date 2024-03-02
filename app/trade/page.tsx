@@ -429,7 +429,7 @@ function Page() {
                         </div>
                     </Dialog>
                 </Transition.Root>
-                <Transition.Root show={timelineModal.state} as={Fragment}>
+                <Transition.Root as={Fragment}>
                     <Dialog
                         as="div"
                         className="relative z-50"

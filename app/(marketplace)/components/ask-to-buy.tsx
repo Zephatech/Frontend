@@ -42,7 +42,7 @@ export default function AskToBuy({
     }
     return (
         <>
-            <div className="mt-10">
+            <div>
                 <button
                     type="button"
                     onClick={() => mutation.mutate({ productId })}
@@ -50,6 +50,7 @@ export default function AskToBuy({
                 >
                     Ask to Buy
                 </button>
+                <div className="mt-2"/>
             </div>
         </>
     )

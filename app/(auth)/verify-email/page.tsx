@@ -11,7 +11,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 export default function App() {
     const router = useRouter()
     const [otp, setOtp] = useState('')
-
+ 
     const queryClient = useQueryClient()
     const mutation = useMutation({
         mutationFn: ({

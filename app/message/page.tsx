@@ -182,8 +182,16 @@ const useSendMessage = () => {
 			});
 			const data = await res.json();
 			if (data.error) throw new Error(data.error);
-
-			setMessages([...messages, data]);
+			console.log(messages)
+			console.log(data)
+			
+			const transformedData = {
+				_id: data.id,
+				message: data.content,
+				senderId: data.sender,
+				createdAt: data.timestamp,
+			};
+			setMessages([...messages, transformedData]);
 		} catch (error) {
 			toast.error(error.message);
 		} finally {
