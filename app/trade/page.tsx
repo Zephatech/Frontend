@@ -14,13 +14,11 @@ import {
     confirmTrade,
     endTrade,
 } from '@/app/_utils/api/trades'
-import { useAuth } from '../_utils/api/auth'
-import { useRouter } from 'next/navigation'
 import { classNames } from '../_utils/styles/styles'
 import TradeTimeLine from './components/TradeTimeline'
+import WithAuth from '@/app/components/withAuth'
 
-export default function Page() {
-    const router = useRouter()
+function Page() {
     const [allTrades, setAllTrades] = useState<Trade[][]>()
     const [confirmActionModel, setConfirmActionModel] = useState({
         state: false,
@@ -40,12 +38,6 @@ export default function Page() {
         queryKey: ['trades'],
         queryFn: getTrades,
     })
-    const {
-        data: authData,
-        isLoading: authIsLoading,
-        isFetching: authIsFetching,
-    } = useAuth()
-    const userId = authData?.userId
 
     const cancelTradeMutation = useMutation({
         mutationFn: ({ tradeId }: { tradeId: number }) => cancelTrade(tradeId),
@@ -174,16 +166,7 @@ export default function Page() {
         )
     }
 
-    useEffect(() => {
-        if (!authIsLoading && !authIsFetching && !userId) {
-            router.replace('/login?unauthenticated')
-        }
-        if (!isLoading) {
-            setAllTrades([data.buy ?? [], data.sell ?? []])
-        }
-    }, [isLoading, authIsLoading, isFetching])
-
-    if (isLoading || authIsLoading || !userId) {
+    if (isLoading) {
         return <h1>Loading...</h1>
     }
     if (!allTrades && !isFetching) {
@@ -490,3 +473,5 @@ export default function Page() {
         )
     }
 }
+
+export default WithAuth(Page)

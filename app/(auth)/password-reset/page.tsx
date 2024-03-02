@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { resetPassword } from '@/app/_utils/api/auth';
 
-
 type FormValues = {
   email: string;
   verificationCode: string;

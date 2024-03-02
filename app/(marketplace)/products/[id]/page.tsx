@@ -16,7 +16,6 @@ export default async function Page({ params }: { params: { id: number } }) {
     const product = (await getProductData(params.id)) as unknown as Product
     const showCourseLink = product.options !== null && product.options?.course;
 
-    console.log(product)
     return (
         <>
             <div className="bg-white">

@@ -4,20 +4,25 @@ interface AuthStore {
     userId: string | null;
     name: string | null;
     isLoading: boolean;
-    isError: boolean;
+    isValidUser: boolean;
     login: (userId: string, name: string) => void;
     logout: () => void;
+    failToLogin: () => void;
 }
 
 const useAuthStore = create<AuthStore>((set) => ({
     userId: null,
     name: null,
-    isLoading: false,
+    isLoading: true,
     isError: false,
+    isValidUser: false,
   
     login: (userId, name) => {
-        console.log('login');
-        set(() => ({ userId, name }));
+        set(() => ({ userId, name, isLoading: false, isValidUser: true }));
+    },
+
+    failToLogin: () => {
+        set(() => ({ userId: null, name: null, isLoading: false, isValidUser: false}));
     },
   
     logout: () => {
