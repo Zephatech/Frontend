@@ -42,7 +42,7 @@ export default function Page() {
       setProducts(data)
     }
   }, [isLoading, isFetching])
-
+  console.log(process.env.NEXT_PUBLIC_BACKEND_URL)
   if (isLoading || authIsLoading) {
     return <h1>Loading...</h1>
   } else if (!products && !isFetching) {

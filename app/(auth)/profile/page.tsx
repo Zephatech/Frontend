@@ -26,7 +26,7 @@ function Profile() {
       try {
         // Replace the following line with your API call to get user profile data
         const response = await fetch(
-          `http://localhost:3001/profile/getProfile`,
+          `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/profile/getProfile`,
           { credentials: 'include' }
         )
         const data = await response.json()
@@ -68,7 +68,7 @@ function Profile() {
   const handleSaveClick = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/profile/updateProfile`,
+        `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/profile/updateProfile`,
         {
           method: 'PUT',
           headers: {

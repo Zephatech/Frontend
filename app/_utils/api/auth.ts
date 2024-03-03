@@ -1,17 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
 
 export const getCurrentUserId = () => {
-  return fetch('http://localhost:3001/auth/getCurrentUserId', {
-    credentials: 'include',
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }).then((res) => res.json())
+  return fetch(
+    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/getCurrentUserId`,
+    {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  ).then((res) => res.json())
 }
 
 export const logout = () => {
-  return fetch('http://localhost:3001/auth/logout', {
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/logout`, {
     credentials: 'include',
     method: 'GET',
     headers: {
@@ -21,14 +24,17 @@ export const logout = () => {
 }
 
 export const login = async (email: string, password: string) => {
-  const res = await fetch('http://localhost:3001/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  })
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/login`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    }
+  )
   const data = await res.json()
   if (res.status == 200) {
     data.success = true
@@ -39,14 +45,17 @@ export const login = async (email: string, password: string) => {
 }
 
 export const verifyEmail = async (email: string, verificationCode: string) => {
-  const res = await fetch('http://localhost:3001/auth/verifyEmail', {
-    method: 'POST',
-    body: JSON.stringify({ email, verificationCode }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  })
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/verifyEmail`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ email, verificationCode }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    }
+  )
   const data = await res.json()
   if (res.ok) {
     data.success = true
@@ -62,7 +71,7 @@ export const register = (
   email: string,
   password: string
 ) => {
-  return fetch('http://localhost:3001/auth/register', {
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/register`, {
     method: 'POST',
     body: JSON.stringify({ firstName, lastName, email, password }),
     headers: {
@@ -81,13 +90,16 @@ export const useAuth = () => {
 
 export const requestResetPassword = async (email: string) => {
   console.log(email)
-  const res = await fetch('http://localhost:3001/auth/requestResetPassword', {
-    method: 'POST',
-    body: JSON.stringify({ email }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/requestResetPassword`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
   const data = await res.json()
   if (res.ok) {
     data.success = true
@@ -102,13 +114,16 @@ export const resetPassword = async (
   verificationCode: string,
   newPassword: string
 ) => {
-  const res = await fetch('http://localhost:3001/auth/resetPassword', {
-    method: 'POST',
-    body: JSON.stringify({ email, verificationCode, newPassword }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/resetPassword`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ email, verificationCode, newPassword }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
   const data = await res.json()
   if (res.ok) {
     data.success = true
@@ -121,7 +136,7 @@ export const resetPassword = async (
 /* Potentially useful for server side get auth */
 // import { cookies } from 'next/headers'
 // export default async function getCurrentUserId() {
-//     const res = await fetch('http://localhost:3001/auth/getCurrentUserId', {
+//     const res = await fetch('${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/getCurrentUserId', {
 //         cache: 'no-cache',
 //         headers: {
 //             Cookie: cookies()

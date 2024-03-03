@@ -69,7 +69,7 @@ function CreateProduct() {
       ) // remove all space
     }
 
-    await fetch('http://localhost:3001/products', {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products`, {
       method: 'POST',
       body: formDataToSend,
       credentials: 'include',

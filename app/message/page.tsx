@@ -96,13 +96,16 @@ const useGetConversations = () => {
     const getConversations = async () => {
       setLoading(true)
       try {
-        const data = await fetch('http://localhost:3001/conversation', {
-          credentials: 'include',
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }).then((res) => res.json())
+        const data = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/conversation`,
+          {
+            credentials: 'include',
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        ).then((res) => res.json())
 
         if (!Array.isArray(data)) {
           throw new Error(data.message)
@@ -178,7 +181,7 @@ const useSendMessage = () => {
     setLoading(true)
     try {
       const res = await fetch(
-        `http://localhost:3001/message/send/${selectedConversation.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/message/send/${selectedConversation.id}`,
         {
           method: 'POST',
           credentials: 'include',
@@ -243,7 +246,7 @@ const useGetMessages = () => {
       setLoading(true)
       try {
         const data = await fetch(
-          `http://localhost:3001/message/${selectedConversation?.id}`,
+          `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/message/${selectedConversation?.id}`,
           {
             credentials: 'include',
             method: 'GET',
