@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
@@ -42,6 +43,11 @@
     "@hookform/devtools": "^4.3.1",
     "@tanstack/eslint-plugin-query": "^4.29.25",
     "@types/js-cookie": "^3.0.3",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.2",
     "prettier": "^3.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": "prettier --write"
   }
 }
