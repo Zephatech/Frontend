@@ -3,19 +3,19 @@
 @tailwind utilities;
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 @layer components {
-    .input-field {
-        @apply shadow-sm h-12 text-sm block w-full rounded-md border border-gray-200 bg-gray-100/50 py-1.5 text-gray-900  placeholder:text-gray-400;
-    }
+  .input-field {
+    @apply shadow-sm h-12 text-sm block w-full rounded-md border border-gray-200 bg-gray-100/50 py-1.5 text-gray-900  placeholder:text-gray-400;
+  }
 
-    .overlay {
-        @apply bg-gray-900/80;
-    }
+  .overlay {
+    @apply bg-gray-900/80;
+  }
 
-    .primary-btn {
-        @apply w-full bg-indigo-600 focus-visible:outline-indigo-600 hover:bg-indigo-500  justify-center rounded-md px-3 py-1.5 text-sm  leading-6 text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2;
-    }
+  .primary-btn {
+    @apply w-full bg-indigo-600 focus-visible:outline-indigo-600 hover:bg-indigo-500  justify-center rounded-md px-3 py-1.5 text-sm  leading-6 text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2;
+  }
 }

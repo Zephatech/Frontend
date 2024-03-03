@@ -1,39 +1,45 @@
 // MyListings.tsx
 'use client'
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import useAuthStore from '@/app/stores/authStore';
-import WithAuth from '@/app/components/withAuth';
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
+import useAuthStore from '@/app/stores/authStore'
+import WithAuth from '@/app/components/withAuth'
 
 const getMyListings = async () => {
-  const response = await fetch(`http://localhost:3001/products/myListings`, { credentials: 'include' });
-  const data = await response.json();
-  return data;
-};
+  const response = await fetch(`http://localhost:3001/products/myListings`, {
+    credentials: 'include',
+  })
+  const data = await response.json()
+  return data
+}
 
 type Listing = {
-  id: number;
-  name: string;
-  category: string;
-  image: string;
-};
+  id: number
+  name: string
+  category: string
+  image: string
+}
 
 const MyListings = () => {
-  const [sellListings, setSellListings] = useState<Listing[]>([]);
-  const { isValidUser } = useAuthStore();
-  const { data: sellListingsData, isLoading, error } = useQuery(['sellListings'], () => isValidUser ? getMyListings() : null);
+  const [sellListings, setSellListings] = useState<Listing[]>([])
+  const { isValidUser } = useAuthStore()
+  const {
+    data: sellListingsData,
+    isLoading,
+    error,
+  } = useQuery(['sellListings'], () => (isValidUser ? getMyListings() : null))
 
   useEffect(() => {
     if (!isLoading && Array.isArray(sellListingsData)) {
-      setSellListings(sellListingsData);
+      setSellListings(sellListingsData)
     }
-  }, [isLoading]);
+  }, [isLoading])
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   } else if (error) {
-    return <div>Error loading listings</div>;
+    return <div>Error loading listings</div>
   } else {
     return (
       <div className="flow-root">
@@ -42,9 +48,15 @@ const MyListings = () => {
             <table className="min-w-full">
               <thead className="bg-white">
                 <tr>
-                  <th className="py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Image</th>
-                  <th className="px-3 py-2 text-left text-sm font-semibold text-gray-900">Title</th>
-                  <th className="px-3 py-2 text-left text-sm font-semibold text-gray-900">Category</th>
+                  <th className="py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                    Image
+                  </th>
+                  <th className="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                    Title
+                  </th>
+                  <th className="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                    Category
+                  </th>
                   <th className="relative py-2 px-3">
                     <span className="sr-only">Actions</span>
                   </th>
@@ -56,19 +68,30 @@ const MyListings = () => {
                     <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm sm:pl-0">
                       <img
                         className="h-11 w-11 rounded-full"
-                        src={listing.image === '' ? 'https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg' : `/images/${listing.image}`}
+                        src={
+                          listing.image === ''
+                            ? 'https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg'
+                            : `/images/${listing.image}`
+                        }
                         alt=""
                       />
                     </td>
                     <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-900">
                       <div className="font-medium text-blue-700 underline">
-                        <Link href={`/products/${listing.id}`}>{listing.name}</Link>
+                        <Link href={`/products/${listing.id}`}>
+                          {listing.name}
+                        </Link>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-900">{listing.category}</td>
+                    <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-900">
+                      {listing.category}
+                    </td>
                     <td className="flex flex-col px-3 py-2 align-center justify-center h-full w-full">
                       {/* You can replace the buttons below with your actual actions */}
-                      <button className="px-2 py-1 bg-blue-500 text-white rounded-md mr-2" onClick={() => handleDelete(listing.id)}>
+                      <button
+                        className="px-2 py-1 bg-blue-500 text-white rounded-md mr-2"
+                        onClick={() => handleDelete(listing.id)}
+                      >
                         Delete
                       </button>
                       <Link href={`/update-product?id=${listing.id}`}>
@@ -82,8 +105,8 @@ const MyListings = () => {
           </div>
         </div>
       </div>
-    );
+    )
   }
-};
+}
 
-export default WithAuth(MyListings);
+export default WithAuth(MyListings)

@@ -8,22 +8,25 @@ import QueryProvider from './_utils/QueryProvider'
 import MainLayout from './components/MainLayout'
 
 export const metadata = {
-    title: 'UW Trade',
+  title: 'UW Trade',
 }
 
-export default async function RootLayout({children, modal} : {children: React.ReactNode, modal: React.ReactNode}) {
-    return (
-        <html lang="en" className="h-full bg-white">
-            <body className="h-full vsc-initialized">
-                <QueryProvider>
-                    {modal}
-                    <MainLayout>{children}</MainLayout>
-                    <ReactQueryDevtools
-                        initialIsOpen={false}
-                        position="bottom-right"
-                    />
-                </QueryProvider>
-            </body>
-        </html>
-    )
+export default async function RootLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode
+  modal: React.ReactNode
+}) {
+  return (
+    <html lang="en" className="h-full bg-white">
+      <body className="h-full vsc-initialized">
+        <QueryProvider>
+          {modal}
+          <MainLayout>{children}</MainLayout>
+          <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+        </QueryProvider>
+      </body>
+    </html>
+  )
 }
