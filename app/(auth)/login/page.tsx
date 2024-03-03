@@ -20,14 +20,13 @@ export default function Login() {
   // prompt user to login if not authenticated
   const searchParams = useSearchParams()
   useEffect(() => {
-    if (searchParams.has('unauthenticated')) {
-      toast.error('You are not logged in yet') // Display the toast message
-    }
     if (isValidUser) {
       toast.info('Already logged in, redirected to homepage')
       router.replace('/')
+    } else if (searchParams.has('unauthenticated')) {
+      toast.error('You are not logged in yet') // Display the toast message
     }
-  }, [isValidUser])
+  }, [])
 
   const mutation = useMutation({
     mutationFn: ({ email, password }: FormValues) => SendLogin(email, password),

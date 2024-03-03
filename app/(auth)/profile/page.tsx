@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, ChangeEvent } from 'react'
 import withAuth from '../../components/withAuth'
+import useAuthStore from '@/app/stores/authStore'
 
 interface UserProfile {
   firstName?: string
@@ -18,7 +19,7 @@ function Profile() {
     phone: '',
     facebook: '',
   })
-
+  const { setName } = useAuthStore()
   useEffect(() => {
     // Fetch user profile data based on userId
     const fetchUserProfile = async () => {
@@ -86,7 +87,7 @@ function Profile() {
           phone: formData.phone,
           facebook: formData.facebook,
         })
-
+        formData.firstName && setName(formData.firstName)
         setEditMode(false)
       } else {
         console.error('Failed to update user profile')

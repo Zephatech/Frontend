@@ -7,14 +7,16 @@ const withAuth = <P extends object>(
 ) => {
   const Wrapper = (props: P) => {
     const router = useRouter()
-    const { isValidUser } = useAuthStore()
-
+    const { isLoading, isValidUser } = useAuthStore()
     useEffect(() => {
-      if (!isValidUser) {
+      if (!isLoading && !isValidUser) {
         router.replace('/login?unauthenticated')
       }
-    }, [isValidUser, router])
+    }, [isLoading])
 
+    if (isLoading) {
+      return null
+    }
     return <WrappedComponent {...props} />
   }
 

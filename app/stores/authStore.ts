@@ -9,6 +9,7 @@ interface AuthStore {
   login: (userId: string, name: string) => void
   logout: () => void
   failToLogin: () => void
+  setName: (name: string) => void
 }
 
 const useAuthStore = create<AuthStore>()(
@@ -29,7 +30,11 @@ const useAuthStore = create<AuthStore>()(
             isValidUser: true,
           }))
         },
-
+        setName: (newName) => {
+          set(() => ({
+            name: newName,
+          }))
+        },
         failToLogin: () => {
           set(() => ({
             userId: null,
