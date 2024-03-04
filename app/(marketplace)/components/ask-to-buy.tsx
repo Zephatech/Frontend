@@ -9,8 +9,8 @@ export default function AskToBuy({
   ownerId,
   productId,
 }: {
-  ownerId: number
-  productId: number
+  ownerId: number | undefined
+  productId: number | undefined
 }) {
   const { data, isLoading, isFetching } = useAuth()
   const userId = data?.userId
@@ -35,7 +35,7 @@ export default function AskToBuy({
     return <p>Loading...</p>
   }
 
-  if (!userId || userId == ownerId) {
+  if (!userId || userId == ownerId || !productId || !ownerId) {
     return null
   }
   return (
