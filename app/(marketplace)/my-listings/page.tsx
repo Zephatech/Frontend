@@ -7,9 +7,12 @@ import useAuthStore from '@/app/stores/authStore'
 import WithAuth from '@/app/components/withAuth'
 
 const getMyListings = async () => {
-  const response = await fetch(`http://localhost:3001/products/myListings`, {
-    credentials: 'include',
-  })
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/myListings`,
+    {
+      credentials: 'include',
+    }
+  )
   const data = await response.json()
   return data
 }

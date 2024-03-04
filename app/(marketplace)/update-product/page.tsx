@@ -23,10 +23,13 @@ function UpdateProduct() {
 
   useEffect(() => {
     const getProduct = async () => {
-      const res = await fetch(`http://localhost:3001/products/${productId}`, {
-        cache: 'no-cache',
-        credentials: 'include',
-      }).then((res) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/${productId}`,
+        {
+          cache: 'no-cache',
+          credentials: 'include',
+        }
+      ).then((res) => {
         return res.json()
       })
       setFormData({
@@ -62,12 +65,15 @@ function UpdateProduct() {
     formDataToSend.append('price', formData.price.toString())
     formDataToSend.append('description', formData.description)
     formDataToSend.append('category', formData.category)
-    await fetch(`http://localhost:3001/products/${productId}`, {
-      method: 'PUT',
-      body: formDataToSend,
-      credentials: 'include',
-      cache: 'no-cache',
-    }).then(async (res) => {
+    await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/${productId}`,
+      {
+        method: 'PUT',
+        body: formDataToSend,
+        credentials: 'include',
+        cache: 'no-cache',
+      }
+    ).then(async (res) => {
       if (res.status == 200) {
         toast.success('Updated')
         const data = await res.json()

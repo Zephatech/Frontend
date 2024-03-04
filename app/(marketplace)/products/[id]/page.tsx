@@ -5,9 +5,12 @@ import { ShieldCheckIcon } from '@heroicons/react/24/outline'
 import AskToBuy from '../../components/ask-to-buy'
 
 const getProductData = async (id: number) => {
-  let res = await fetch(`http://localhost:3001/products/${id}`, {
-    cache: 'no-cache',
-  })
+  let res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/${id}`,
+    {
+      cache: 'no-cache',
+    }
+  )
   res = await res.json()
   return res
 }
