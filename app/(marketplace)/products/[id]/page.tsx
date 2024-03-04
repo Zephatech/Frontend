@@ -147,7 +147,7 @@ export default function Page({ params }: { params: { id: number } }) {
   useEffect(() => {
     const getProductData = async (id: number) => {
       try {
-        const res = await fetch(`http://localhost:3001/products/${id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products{
           cache: 'no-cache',
         })
         const data = await res.json()

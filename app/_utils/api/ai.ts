@@ -5,7 +5,7 @@ export const generateDescription = async (image: any) => {
 
   formDataToSend.append('image', image)
   const res = await fetch(
-    'http://localhost:3001/products/generateTextForImage',
+    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/generateTextForImage`,
     {
       method: 'POST',
       body: formDataToSend,
