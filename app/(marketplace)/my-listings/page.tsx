@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import useAuthStore from '@/app/stores/authStore'
 import WithAuth from '@/app/components/withAuth'
+import { deleteProduct } from '@/app/_utils/api/products'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 const getMyListings = async () => {
   const response = await fetch(
@@ -25,6 +28,7 @@ type Listing = {
 }
 
 const MyListings = () => {
+  const router = useRouter()
   const [sellListings, setSellListings] = useState<Listing[]>([])
   const { isValidUser } = useAuthStore()
   const {
@@ -32,6 +36,18 @@ const MyListings = () => {
     isLoading,
     error,
   } = useQuery(['sellListings'], () => (isValidUser ? getMyListings() : null))
+
+  const handleDelete = async (id: number) => {
+    const response = await deleteProduct(id)
+    console.log(response)
+    if (response.success) {
+      setSellListings((prevListings) =>
+        prevListings.filter((listing) => listing.id !== id)
+      )
+    }else {
+      toast.error('Error deleting listing')
+    }
+  }
 
   useEffect(() => {
     if (!isLoading && Array.isArray(sellListingsData)) {
@@ -97,9 +113,13 @@ const MyListings = () => {
                       >
                         Delete
                       </button>
-                      <Link href={`/update-product?id=${listing.id}`}>
+                      <span style={{ marginTop: '8px' }}></span>
+                      <button
+                        className="px-2 py-1 bg-blue-500 text-white rounded-md mr-2"
+                        onClick={() => router.push(`/update-product?id=${listing.id}`)}
+                      >
                         Edit
-                      </Link>
+                      </button>
                     </td>
                   </tr>
                 ))}
