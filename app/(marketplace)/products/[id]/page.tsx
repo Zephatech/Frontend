@@ -3,12 +3,19 @@ import { useState, useEffect, Fragment } from 'react'
 import { Product } from '@/app/_utils/api/products'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
+<<<<<<< HEAD
 import { useRouter } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
 import { TextField } from '@mui/material'
 import useAuthStore from '@/app/stores/authStore'
-import AskToBuy from '../../components/ask-to-buy'
+=======
+import Image from 'next/image'
 
+>>>>>>> b004859 (Initialize for deployment)
+import AskToBuy from '../../components/ask-to-buy'
+import { BACKEND_URL } from '../../../constants/backend'
+
+<<<<<<< HEAD
 // compoents
 function ContactInfoCard({ isOpen, setIsOpen, profile }: { isOpen: boolean, setIsOpen: (value: boolean) => void, profile: any }) {
   return (
@@ -61,6 +68,19 @@ function SendMessageCard({ isOpen, setIsOpen, ownerId }: { isOpen: boolean, setI
   const sendMessage = async () => {
     try {
       if (ownerId == undefined) throw new Error('Owner Id is null')
+=======
+const getProductData = async (id: number) => {
+    let res = await fetch(`${BACKEND_URL}/products/${id}`, {
+        cache: 'no-cache',
+    })
+    res = await res.json()
+    return res
+}
+
+export default async function Page({ params }: { params: { id: number } }) {
+    const product = (await getProductData(params.id)) as unknown as Product
+    const showCourseLink = product.options !== null && product.options?.course
+>>>>>>> b004859 (Initialize for deployment)
 
       const res = await fetch(`http://localhost:3001/message/send/${ownerId}`, {
         method: "POST",
@@ -135,6 +155,7 @@ function SendMessageCard({ isOpen, setIsOpen, ownerId }: { isOpen: boolean, setI
   )
 }
 
+<<<<<<< HEAD
 export default function Page({ params }: { params: { id: number } }) {
   const router = useRouter()
   const [product, setProduct] = useState<Product | null>(null)
@@ -143,6 +164,51 @@ export default function Page({ params }: { params: { id: number } }) {
   const [contactCardIsOpen, setContactCardIsOpen] = useState(false)
   const [messageCardIsOpen, setMessageCardIsOpen] = useState(false)
   const { isValidUser } = useAuthStore();
+=======
+                            <div className="mt-6 flex items-center">
+                                <CheckIcon
+                                    className="h-5 w-5 flex-shrink-0 text-green-500"
+                                    aria-hidden="true"
+                                />
+                                <p className="ml-2 text-sm text-gray-500">
+                                    Good Seller Rating
+                                </p>
+                            </div>
+
+                            {showCourseLink && (
+                                <div className="mt-6 flex items-center">
+                                    <a
+                                        href={`https://uwflow.com/course/${showCourseLink}`}
+                                        className="text-sm text-blue-500 hover:text-blue-700"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Related courses on UWFlow
+                                    </a>
+                                </div>
+                            )}
+                        </section>
+                    </div>
+                    <div className="mt-10 md:col-start-2 md:row-span-2 md:mt-0 md:self-center">
+                        <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg">
+                            <Image
+                                src={
+                                    product.image === ''
+                                        ? 'https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg'
+                                        : `/images/${product.image}`
+                                }
+                                alt={product.name}
+                                className="h-full w-full object-cover object-center"
+                            />
+                        </div>
+                    </div>
+                    {/* Product form */}
+                    <div className="mt-10 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start">
+                        <section aria-labelledby="options-heading">
+                            <h2 id="options-heading" className="sr-only">
+                                Product options
+                            </h2>
+>>>>>>> b004859 (Initialize for deployment)
 
   useEffect(() => {
     const getProductData = async (id: number) => {

@@ -1,6 +1,8 @@
 import { attachStatus } from '.'
 import { Product } from './products'
 
+import { BACKEND_URL } from '../../constants/backend'
+
 export const createTrade = async (productId: number) => {
   console.log('HERE with', productId)
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/trade`, {

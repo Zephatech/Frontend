@@ -1,0 +1,26 @@
+version: '1'
+
+services:
+    next-app:
+        container_name: uw-trade-frontend
+        build:
+            context: ./
+            dockerfile: frontend.Dockerfile
+
+        # Set environment variables based on the .env file
+        env_file:
+            - .env
+        volumes:
+            - ./app/src
+            - ./app/public
+        restart: always
+        ports:
+            - 3000:3000
+        networks:
+            - my_network
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+    my_network:
+        external: true

@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
+import { BACKEND_URL } from '../../constants/backend'
+
 export const getCurrentUserId = () => {
   return fetch(
     `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/getCurrentUserId`,
@@ -71,7 +73,7 @@ export const register = (
   email: string,
   password: string
 ) => {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/register`, {
+  return fetch('${BACKEND_URL}/auth/register', {
     method: 'POST',
     body: JSON.stringify({ firstName, lastName, email, password }),
     headers: {
