@@ -10,13 +10,23 @@ import useAuthStore from '@/app/stores/authStore'
 import AskToBuy from '../../components/ask-to-buy'
 
 // compoents
-function ContactInfoCard({ isOpen, setIsOpen, profile }: { isOpen: boolean, setIsOpen: (value: boolean) => void, profile: any }) {
+function ContactInfoCard({
+  isOpen,
+  setIsOpen,
+  profile,
+}: {
+  isOpen: boolean
+  setIsOpen: (value: boolean) => void
+  profile: any
+}) {
   return (
     <Transition.Root as={Fragment} show={isOpen}>
       <Dialog
         as="div"
         className="relative z-50"
-        onClose={() => { setIsOpen(false) }}
+        onClose={() => {
+          setIsOpen(false)
+        }}
       >
         <Transition.Child
           as={Fragment}
@@ -56,23 +66,35 @@ function ContactInfoCard({ isOpen, setIsOpen, profile }: { isOpen: boolean, setI
   )
 }
 
-function SendMessageCard({ isOpen, setIsOpen, ownerId }: { isOpen: boolean, setIsOpen: (value: boolean) => void, ownerId: number | undefined }) {
-  const [message, setMessage] = useState('Hello, I am interested in your product. Is it still avaiable?')
+function SendMessageCard({
+  isOpen,
+  setIsOpen,
+  ownerId,
+}: {
+  isOpen: boolean
+  setIsOpen: (value: boolean) => void
+  ownerId: number | undefined
+}) {
+  const [message, setMessage] = useState(
+    'Hello, I am interested in your product. Is it still avaiable?'
+  )
   const sendMessage = async () => {
     try {
       if (ownerId == undefined) throw new Error('Owner Id is null')
 
-      const res = await fetch(`http://localhost:3001/message/send/${ownerId}`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/message/send/${ownerId}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message }),
+        }
+      )
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
     } catch (error) {
       // toast.error(error.message);
     } finally {
@@ -85,7 +107,9 @@ function SendMessageCard({ isOpen, setIsOpen, ownerId }: { isOpen: boolean, setI
       <Dialog
         as="div"
         className="relative z-50"
-        onClose={() => { setIsOpen(false) }}
+        onClose={() => {
+          setIsOpen(false)
+        }}
       >
         <Transition.Child
           as={Fragment}
@@ -142,23 +166,29 @@ export default function Page({ params }: { params: { id: number } }) {
   const [loading, setLoading] = useState<boolean>(true)
   const [contactCardIsOpen, setContactCardIsOpen] = useState(false)
   const [messageCardIsOpen, setMessageCardIsOpen] = useState(false)
-  const { isValidUser } = useAuthStore();
+  const { isValidUser } = useAuthStore()
 
   useEffect(() => {
     const getProductData = async (id: number) => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/${id}`, {
-          cache: 'no-cache',
-        })
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/${id}`,
+          {
+            cache: 'no-cache',
+          }
+        )
         const data = await res.json()
         setProduct(data)
 
         if (isValidUser && data.ownerId != null) {
-          const res = await fetch(`http://localhost:3001/profile/getOtherUserProfile/${data.ownerId}`, {
-            cache: 'no-cache',
-            credentials: 'include'
-          })
-          const profileData = await res.json();
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/profile/getOtherUserProfile/${data.ownerId}`,
+            {
+              cache: 'no-cache',
+              credentials: 'include',
+            }
+          )
+          const profileData = await res.json()
           setSellerProfile(profileData)
         }
       } catch (error) {
@@ -202,10 +232,7 @@ export default function Page({ params }: { params: { id: number } }) {
               </h1>
             </div>
 
-            <section
-              aria-labelledby="information-heading"
-              className="mt-4"
-            >
+            <section aria-labelledby="information-heading" className="mt-4">
               <h2 id="information-heading" className="sr-only">
                 Product information
               </h2>
@@ -226,9 +253,7 @@ export default function Page({ params }: { params: { id: number } }) {
                   className="h-5 w-5 flex-shrink-0 text-green-500"
                   aria-hidden="true"
                 />
-                <p className="ml-2 text-sm text-gray-500">
-                  Good Seller Rating
-                </p>
+                <p className="ml-2 text-sm text-gray-500">Good Seller Rating</p>
               </div>
 
               {showCourseLink && (
@@ -265,33 +290,35 @@ export default function Page({ params }: { params: { id: number } }) {
                 {isValidUser ? (
                   <button
                     type="button"
-                    onClick={() => { setContactCardIsOpen(true) }}
+                    onClick={() => {
+                      setContactCardIsOpen(true)
+                    }}
                     className="flex w-full items-center justify-center primary-btn"
                   >
                     Check Contact Info
-                  </button>)
-                  : (
-                    <button
-                      type="button"
-                      onClick={() => { router.replace('/login') }}
-                      className="flex w-full items-center justify-center primary-btn"
-                    >
-                      Login to send message to seller or get contact info
-                    </button>
-                  )
-                }
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      router.replace('/login')
+                    }}
+                    className="flex w-full items-center justify-center primary-btn"
+                  >
+                    Login to send message to seller or get contact info
+                  </button>
+                )}
 
                 <button
                   type="button"
-                  onClick={() => { setMessageCardIsOpen(true) }}
+                  onClick={() => {
+                    setMessageCardIsOpen(true)
+                  }}
                   className="flex w-full items-center justify-center primary-btn"
                 >
                   Send message to seller
                 </button>
-                <AskToBuy
-                  ownerId={product?.ownerId}
-                  productId={product?.id}
-                />
+                <AskToBuy ownerId={product?.ownerId} productId={product?.id} />
                 <div className="mt-6 text-center">
                   <a
                     href="#"

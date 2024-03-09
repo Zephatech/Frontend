@@ -18,7 +18,7 @@ import { classNames } from '../_utils/styles/styles'
 import TradeTimeLine from './components/TradeTimeline'
 import WithAuth from '@/app/components/withAuth'
 
-function Page() {
+const Page = () => {
   const [allTrades, setAllTrades] = useState<Trade[][]>()
   const [confirmActionModel, setConfirmActionModel] = useState({
     state: false,
@@ -96,7 +96,7 @@ function Page() {
   }) => {
     const status = getStatus(trade)
     if (status === 'fulfilled') {
-      return null
+      return <></>
     }
     return (
       <>
@@ -431,6 +431,7 @@ function Page() {
       </div>
     )
   }
+  return <></>
 }
 
 export default WithAuth(Page)
