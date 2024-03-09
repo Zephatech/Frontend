@@ -14,9 +14,9 @@ import {
   confirmTrade,
   endTrade,
 } from '@/app/_utils/api/trades'
+import WithAuth from '@/app/components/withAuth'
 import { classNames } from '../_utils/styles/styles'
 import TradeTimeLine from './components/TradeTimeline'
-import WithAuth from '@/app/components/withAuth'
 
 const Page = () => {
   const [allTrades, setAllTrades] = useState<Trade[][]>()
@@ -96,7 +96,7 @@ const Page = () => {
   }) => {
     const status = getStatus(trade)
     if (status === 'fulfilled') {
-      return <></>
+      return null
     }
     return (
       <>
@@ -166,14 +166,18 @@ const Page = () => {
     )
   }
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!isLoading) {
+      setAllTrades([data.buy ?? [], data.sell ?? []])
+    }
+  }, [isLoading, isFetching])
+
+  if (isLoading || isFetching) {
     return <h1>Loading...</h1>
   }
-  if (!allTrades && !isFetching) {
+  if (!allTrades) {
     return <h1>No Products yet</h1>
-  }
-  if (allTrades) {
-    console.log(allTrades)
+  } else {
     return (
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flow-root">
@@ -431,7 +435,6 @@ const Page = () => {
       </div>
     )
   }
-  return <></>
 }
 
 export default WithAuth(Page)
