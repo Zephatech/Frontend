@@ -4,20 +4,18 @@ import {
   PhotoIcon,
   PencilIcon,
 } from '@heroicons/react/24/solid'
-import { useState, useEffect, Fragment } from 'react'
+import { useState, Fragment } from 'react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
 import { generateDescription } from '@/app/_utils/api/ai'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { ScaleLoader } from 'react-spinners'
-<<<<<<< HEAD
 import useAuthStore from '@/app/stores/authStore'
 import WithAuth from '@/app/components/withAuth'
-=======
-import Image from 'next/image'
+
 import { BACKEND_URL } from '../../constants/backend'
->>>>>>> b004859 (Initialize for deployment)
 
 function CreateProduct() {
   const queryClient = useQueryClient()
@@ -39,7 +37,6 @@ function CreateProduct() {
 
   const { name, description, price, category, image, course } = formData
 
-<<<<<<< HEAD
   const onChange = (e: any) =>
     setFormData({ ...formData, [e.target.name]: e.target.value })
   const mutation = useMutation({
@@ -60,13 +57,6 @@ function CreateProduct() {
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     const formDataToSend = new FormData()
-=======
-    useEffect(() => {
-        if (!isLoading && !isFetching && !userId) {
-            router.replace('/login?unauthenticated')
-        }
-    }, [isLoading, isFetching, userId, router])
->>>>>>> b004859 (Initialize for deployment)
 
     if (formData.image) {
       formDataToSend.append('image', formData.image)
@@ -82,7 +72,7 @@ function CreateProduct() {
       ) // remove all space
     }
 
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products`, {
+    await fetch(`${BACKEND_URL}/products`, {
       method: 'POST',
       body: formDataToSend,
       credentials: 'include',
@@ -97,7 +87,6 @@ function CreateProduct() {
         return res.json().then((data) => {
           const message = data.message
 
-<<<<<<< HEAD
           setToxicModal({
             state: true,
             reason:
@@ -105,47 +94,6 @@ function CreateProduct() {
                 ? 'image'
                 : 'text',
           })
-=======
-        if (formData.image) {
-            formDataToSend.append('image', formData.image)
-        }
-        formDataToSend.append('name', formData.name)
-        formDataToSend.append('price', formData.price.toString())
-        formDataToSend.append('description', formData.description)
-        formDataToSend.append('category', formData.category)
-        if (formData.category === 'Textbook' && formData.course !== '') {
-            formDataToSend.append(
-                'options',
-                JSON.stringify({ course: formData.course.replace(/\s/g, '') })
-            ) // remove all space
-        }
-
-        await fetch('${BACKEND_URL}/products', {
-            method: 'POST',
-            body: formDataToSend,
-            credentials: 'include',
-            cache: 'no-cache',
-        }).then(async (res) => {
-            if (res.status == 200) {
-                toast.success('Posted')
-                const data = await res.json()
-                router.replace(`/products/${data.product.id}`)
-                queryClient.invalidateQueries({ queryKey: ['products'] })
-            } else {
-                return res.json().then((data) => {
-                    const message = data.message
-
-                    setToxicModal({
-                        state: true,
-                        reason:
-                            message ===
-                            'Product image contains sensitive content'
-                                ? 'image'
-                                : 'text',
-                    })
-                })
-            }
->>>>>>> b004859 (Initialize for deployment)
         })
       }
     })
@@ -223,13 +171,12 @@ function CreateProduct() {
               {previewImage ? (
                 <>
                   <div className="mt-6">
-                    <img
+                    <Image
                       className="mt-6"
                       width="300"
                       src={previewImage}
                       alt="Preview"
                     />
-<<<<<<< HEAD
                   </div>
                   <button
                     onClick={() => {
@@ -238,174 +185,6 @@ function CreateProduct() {
                         image: '',
                       })
                       setPreviewImage('')
-=======
-                </div>
-                <div className="">
-                    <label
-                        htmlFor="description"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                        Description
-                    </label>
-                    <div className="">
-                        <textarea
-                            id="description"
-                            name="description"
-                            value={description}
-                            onChange={onChange}
-                            rows={3}
-                            className="input-field"
-                        />
-                    </div>
-                </div>
-                <div className="">
-                    <label
-                        htmlFor="photo"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                        Photo
-                    </label>
-                    <div className="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                        <div className="text-center">
-                            {previewImage ? (
-                                <>
-                                    <div className="mt-6">
-                                        <Image
-                                            className="mt-6"
-                                            width="300"
-                                            src={previewImage}
-                                            alt="Preview"
-                                        />
-                                    </div>
-                                    <button
-                                        onClick={() => {
-                                            setFormData({
-                                                ...formData,
-                                                image: '',
-                                            })
-                                            setPreviewImage('')
-                                        }}
-                                        className="mt-10 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                    >
-                                        Reset Image
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <PhotoIcon
-                                        className="mx-auto h-12 w-12 text-gray-300"
-                                        aria-hidden="true"
-                                    />
-                                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                        <label
-                                            htmlFor="image"
-                                            className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                        >
-                                            <span>Upload a file</span>
-                                            <input
-                                                id="image"
-                                                name="image"
-                                                value={image}
-                                                onChange={handleImageChange}
-                                                type="file"
-                                                className="sr-only"
-                                            />
-                                        </label>
-                                        <p className="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p className="text-xs leading-5 text-gray-600">
-                                        PNG, JPEG up to 10MB
-                                    </p>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="">
-                    <label
-                        htmlFor="price"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                        Price
-                    </label>
-                    <input
-                        type="number"
-                        name="price"
-                        value={price}
-                        onChange={onChange}
-                        id="price"
-                        className="input-field"
-                    />
-                </div>
-                <div className="">
-                    <label
-                        htmlFor="category"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                        Category
-                    </label>
-                    <div className="">
-                        <select
-                            id="category"
-                            name="category"
-                            value={category}
-                            onChange={onChange}
-                            className="input-field"
-                        >
-                            <option>Textbook</option>
-                            <option>Living Supply</option>
-                            <option>School Supply</option>
-                        </select>
-                    </div>
-                </div>
-
-                {category === 'Textbook' && (
-                    <div className="">
-                        <label
-                            htmlFor="course"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                            Course
-                        </label>
-                        <input
-                            type="text"
-                            name="course"
-                            id="course"
-                            value={course}
-                            onChange={onChange}
-                            className="input-field"
-                            placeholder="e.g. ECE 105"
-                        />
-                    </div>
-                )}
-
-                <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button
-                        onClick={() => {
-                            router.push('/')
-                        }}
-                        type="button"
-                        className="text-sm font-semiboltext-gray-900"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        onClick={handleSubmit}
-                        className="primary-btn w-fit"
-                    >
-                        Post
-                    </button>
-                </div>
-            </form>
-            <Transition.Root show={toxicModal.state} as={Fragment}>
-                <Dialog
-                    as="div"
-                    className="relative z-50"
-                    onClose={() => {
-                        setToxicModal({ ...toxicModal, state: false })
->>>>>>> b004859 (Initialize for deployment)
                     }}
                     className="mt-10 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >

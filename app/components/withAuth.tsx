@@ -2,9 +2,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import useAuthStore from '../stores/authStore'
 
-const withAuth = <P extends object>(
-  WrappedComponent: React.ComponentType<P>
-) => {
+const withAuth = <P extends object>(WrappedComponent: any) => {
   const Wrapper = (props: P) => {
     const router = useRouter()
     const { isLoading, isValidUser } = useAuthStore()
@@ -12,7 +10,7 @@ const withAuth = <P extends object>(
       if (!isLoading && !isValidUser) {
         router.replace('/login?unauthenticated')
       }
-    }, [isLoading])
+    }, [isLoading, isValidUser, router])
 
     if (isLoading) {
       return null

@@ -37,7 +37,7 @@ export default function MainLayout({
     }
 
     fetchData()
-  }, [])
+  }, ['failToLogin', 'login', 'queryClient'])
 
   // If user info is still loading, return null
   if (isLoading) {

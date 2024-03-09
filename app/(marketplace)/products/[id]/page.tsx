@@ -3,27 +3,32 @@ import { useState, useEffect, Fragment } from 'react'
 import { Product } from '@/app/_utils/api/products'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
-<<<<<<< HEAD
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
 import { TextField } from '@mui/material'
 import useAuthStore from '@/app/stores/authStore'
-=======
-import Image from 'next/image'
-
->>>>>>> b004859 (Initialize for deployment)
 import AskToBuy from '../../components/ask-to-buy'
 import { BACKEND_URL } from '../../../constants/backend'
 
-<<<<<<< HEAD
 // compoents
-function ContactInfoCard({ isOpen, setIsOpen, profile }: { isOpen: boolean, setIsOpen: (value: boolean) => void, profile: any }) {
+function ContactInfoCard({
+  isOpen,
+  setIsOpen,
+  profile,
+}: {
+  isOpen: boolean
+  setIsOpen: (value: boolean) => void
+  profile: any
+}) {
   return (
     <Transition.Root as={Fragment} show={isOpen}>
       <Dialog
         as="div"
         className="relative z-50"
-        onClose={() => { setIsOpen(false) }}
+        onClose={() => {
+          setIsOpen(false)
+        }}
       >
         <Transition.Child
           as={Fragment}
@@ -63,36 +68,32 @@ function ContactInfoCard({ isOpen, setIsOpen, profile }: { isOpen: boolean, setI
   )
 }
 
-function SendMessageCard({ isOpen, setIsOpen, ownerId }: { isOpen: boolean, setIsOpen: (value: boolean) => void, ownerId: number | undefined }) {
-  const [message, setMessage] = useState('Hello, I am interested in your product. Is it still avaiable?')
+function SendMessageCard({
+  isOpen,
+  setIsOpen,
+  ownerId,
+}: {
+  isOpen: boolean
+  setIsOpen: (value: boolean) => void
+  ownerId: number | undefined
+}) {
+  const [message, setMessage] = useState(
+    'Hello, I am interested in your product. Is it still avaiable?'
+  )
   const sendMessage = async () => {
     try {
       if (ownerId == undefined) throw new Error('Owner Id is null')
-=======
-const getProductData = async (id: number) => {
-    let res = await fetch(`${BACKEND_URL}/products/${id}`, {
-        cache: 'no-cache',
-    })
-    res = await res.json()
-    return res
-}
-
-export default async function Page({ params }: { params: { id: number } }) {
-    const product = (await getProductData(params.id)) as unknown as Product
-    const showCourseLink = product.options !== null && product.options?.course
->>>>>>> b004859 (Initialize for deployment)
 
       const res = await fetch(`http://localhost:3001/message/send/${ownerId}`, {
-        method: "POST",
-        credentials: "include",
+        method: 'POST',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-
+      })
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
     } catch (error) {
       // toast.error(error.message);
     } finally {
@@ -105,7 +106,9 @@ export default async function Page({ params }: { params: { id: number } }) {
       <Dialog
         as="div"
         className="relative z-50"
-        onClose={() => { setIsOpen(false) }}
+        onClose={() => {
+          setIsOpen(false)
+        }}
       >
         <Transition.Child
           as={Fragment}
@@ -137,7 +140,7 @@ export default async function Page({ params }: { params: { id: number } }) {
                   multiline
                   rows={4}
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={(e: any) => setMessage(e.target.value)}
                 />
                 <button
                   type="button"
@@ -155,7 +158,6 @@ export default async function Page({ params }: { params: { id: number } }) {
   )
 }
 
-<<<<<<< HEAD
 export default function Page({ params }: { params: { id: number } }) {
   const router = useRouter()
   const [product, setProduct] = useState<Product | null>(null)
@@ -163,68 +165,26 @@ export default function Page({ params }: { params: { id: number } }) {
   const [loading, setLoading] = useState<boolean>(true)
   const [contactCardIsOpen, setContactCardIsOpen] = useState(false)
   const [messageCardIsOpen, setMessageCardIsOpen] = useState(false)
-  const { isValidUser } = useAuthStore();
-=======
-                            <div className="mt-6 flex items-center">
-                                <CheckIcon
-                                    className="h-5 w-5 flex-shrink-0 text-green-500"
-                                    aria-hidden="true"
-                                />
-                                <p className="ml-2 text-sm text-gray-500">
-                                    Good Seller Rating
-                                </p>
-                            </div>
-
-                            {showCourseLink && (
-                                <div className="mt-6 flex items-center">
-                                    <a
-                                        href={`https://uwflow.com/course/${showCourseLink}`}
-                                        className="text-sm text-blue-500 hover:text-blue-700"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        Related courses on UWFlow
-                                    </a>
-                                </div>
-                            )}
-                        </section>
-                    </div>
-                    <div className="mt-10 md:col-start-2 md:row-span-2 md:mt-0 md:self-center">
-                        <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg">
-                            <Image
-                                src={
-                                    product.image === ''
-                                        ? 'https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg'
-                                        : `/images/${product.image}`
-                                }
-                                alt={product.name}
-                                className="h-full w-full object-cover object-center"
-                            />
-                        </div>
-                    </div>
-                    {/* Product form */}
-                    <div className="mt-10 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start">
-                        <section aria-labelledby="options-heading">
-                            <h2 id="options-heading" className="sr-only">
-                                Product options
-                            </h2>
->>>>>>> b004859 (Initialize for deployment)
+  const { isValidUser } = useAuthStore()
 
   useEffect(() => {
     const getProductData = async (id: number) => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/${id}`, {
+        const res = await fetch(`${BACKEND_URL}/products/${id}`, {
           cache: 'no-cache',
         })
         const data = await res.json()
         setProduct(data)
 
         if (isValidUser && data.ownerId != null) {
-          const res = await fetch(`http://localhost:3001/profile/getOtherUserProfile/${data.ownerId}`, {
-            cache: 'no-cache',
-            credentials: 'include'
-          })
-          const profileData = await res.json();
+          const res = await fetch(
+            `http://localhost:3001/profile/getOtherUserProfile/${data.ownerId}`,
+            {
+              cache: 'no-cache',
+              credentials: 'include',
+            }
+          )
+          const profileData = await res.json()
           setSellerProfile(profileData)
         }
       } catch (error) {
@@ -235,7 +195,7 @@ export default function Page({ params }: { params: { id: number } }) {
     }
 
     getProductData(params.id)
-  }, [params.id])
+  }, [params.id, isValidUser])
 
   if (loading) {
     return <div>Loading...</div>
@@ -268,10 +228,7 @@ export default function Page({ params }: { params: { id: number } }) {
               </h1>
             </div>
 
-            <section
-              aria-labelledby="information-heading"
-              className="mt-4"
-            >
+            <section aria-labelledby="information-heading" className="mt-4">
               <h2 id="information-heading" className="sr-only">
                 Product information
               </h2>
@@ -292,9 +249,7 @@ export default function Page({ params }: { params: { id: number } }) {
                   className="h-5 w-5 flex-shrink-0 text-green-500"
                   aria-hidden="true"
                 />
-                <p className="ml-2 text-sm text-gray-500">
-                  Good Seller Rating
-                </p>
+                <p className="ml-2 text-sm text-gray-500">Good Seller Rating</p>
               </div>
 
               {showCourseLink && (
@@ -313,13 +268,13 @@ export default function Page({ params }: { params: { id: number } }) {
           </div>
           <div className="mt-10 md:col-start-2 md:row-span-2 md:mt-0 md:self-center">
             <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg">
-              <img
+              <Image
                 src={
                   product?.image === ''
                     ? 'https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg'
                     : `/images/${product?.image}`
                 }
-                alt={product?.name}
+                alt={product ? product.name : ''}
                 className="h-full w-full object-cover object-center"
               />
             </div>
@@ -331,33 +286,35 @@ export default function Page({ params }: { params: { id: number } }) {
                 {isValidUser ? (
                   <button
                     type="button"
-                    onClick={() => { setContactCardIsOpen(true) }}
+                    onClick={() => {
+                      setContactCardIsOpen(true)
+                    }}
                     className="flex w-full items-center justify-center primary-btn"
                   >
                     Check Contact Info
-                  </button>)
-                  : (
-                    <button
-                      type="button"
-                      onClick={() => { router.replace('/login') }}
-                      className="flex w-full items-center justify-center primary-btn"
-                    >
-                      Login to send message to seller or get contact info
-                    </button>
-                  )
-                }
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      router.replace('/login')
+                    }}
+                    className="flex w-full items-center justify-center primary-btn"
+                  >
+                    Login to send message to seller or get contact info
+                  </button>
+                )}
 
                 <button
                   type="button"
-                  onClick={() => { setMessageCardIsOpen(true) }}
+                  onClick={() => {
+                    setMessageCardIsOpen(true)
+                  }}
                   className="flex w-full items-center justify-center primary-btn"
                 >
                   Send message to seller
                 </button>
-                <AskToBuy
-                  ownerId={product?.ownerId}
-                  productId={product?.id}
-                />
+                <AskToBuy ownerId={product?.ownerId} productId={product?.id} />
                 <div className="mt-6 text-center">
                   <a
                     href="#"

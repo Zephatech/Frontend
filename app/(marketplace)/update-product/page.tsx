@@ -4,15 +4,12 @@ import { ExclamationTriangleIcon, PhotoIcon } from '@heroicons/react/24/solid'
 import { useState, useEffect, Fragment } from 'react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
 import { useQueryClient } from '@tanstack/react-query'
-<<<<<<< HEAD
 import WithAuth from '../../components/withAuth'
-=======
-import Image from 'next/image'
 
 import { BACKEND_URL } from '../../constants/backend'
->>>>>>> b004859 (Initialize for deployment)
 
 function UpdateProduct() {
   const router = useRouter()
@@ -27,16 +24,12 @@ function UpdateProduct() {
     image: '',
   })
 
-<<<<<<< HEAD
   useEffect(() => {
     const getProduct = async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/${productId}`,
-        {
-          cache: 'no-cache',
-          credentials: 'include',
-        }
-      ).then((res) => {
+      const res = await fetch(`${BACKEND_URL}/products/${productId}`, {
+        cache: 'no-cache',
+        credentials: 'include',
+      }).then((res) => {
         return res.json()
       })
       setFormData({
@@ -51,52 +44,20 @@ function UpdateProduct() {
       }
     }
     getProduct()
-  }, [])
-=======
-    useEffect(() => {
-        const getProduct = async () => {
-            const res = await fetch(`${BACKEND_URL}/products/${productId}`, {
-                cache: 'no-cache',
-                credentials: 'include',
-            }).then((res) => {
-                return res.json()
-            })
-            setFormData({
-                name: res.name,
-                description: res.description,
-                price: res.price,
-                category: res.category,
-                image: res.image,
-            })
-            if (res.image) {
-                setPreviewImage(`images/${res.image}`)
-            }
-        }
-        getProduct()
-    }, [productId])
->>>>>>> b004859 (Initialize for deployment)
+  }, [, productId])
 
   const queryClient = useQueryClient()
   const [toxicModal, setToxicModal] = useState(false)
 
   const { name, description, price, category, image } = formData
 
-<<<<<<< HEAD
   const onChange = (e: any) =>
     setFormData({ ...formData, [e.target.name]: e.target.value })
-=======
-    useEffect(() => {
-        if (!isLoading && !isFetching && !userId) {
-            router.replace('/login?unauthenticated')
-        }
-    }, [isLoading, isFetching, userId, router])
->>>>>>> b004859 (Initialize for deployment)
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     const formDataToSend = new FormData()
 
-<<<<<<< HEAD
     if (formData.image) {
       formDataToSend.append('image', formData.image)
     }
@@ -104,15 +65,12 @@ function UpdateProduct() {
     formDataToSend.append('price', formData.price.toString())
     formDataToSend.append('description', formData.description)
     formDataToSend.append('category', formData.category)
-    await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/${productId}`,
-      {
-        method: 'PUT',
-        body: formDataToSend,
-        credentials: 'include',
-        cache: 'no-cache',
-      }
-    ).then(async (res) => {
+    await fetch(`${BACKEND_URL}/products/${productId}`, {
+      method: 'PUT',
+      body: formDataToSend,
+      credentials: 'include',
+      cache: 'no-cache',
+    }).then(async (res) => {
       if (res.status == 200) {
         toast.success('Updated')
         const data = await res.json()
@@ -122,39 +80,6 @@ function UpdateProduct() {
       } else {
         return res.json().then((res) => {
           setToxicModal(true)
-=======
-    const onChange = (e: any) =>
-        setFormData({ ...formData, [e.target.name]: e.target.value })
-
-    const handleSubmit = async (e: any) => {
-        e.preventDefault()
-        const formDataToSend = new FormData()
-
-        if (formData.image) {
-            formDataToSend.append('image', formData.image)
-        }
-        formDataToSend.append('name', formData.name)
-        formDataToSend.append('price', formData.price.toString())
-        formDataToSend.append('description', formData.description)
-        formDataToSend.append('category', formData.category)
-        await fetch(`${BACKEND_URL}/products/${productId}`, {
-            method: 'PUT',
-            body: formDataToSend,
-            credentials: 'include',
-            cache: 'no-cache',
-        }).then(async (res) => {
-            if (res.status == 200) {
-                toast.success('Updated')
-                const data = await res.json()
-                console.log(data)
-                router.replace('/')
-                queryClient.invalidateQueries({ queryKey: ['products'] })
-            } else {
-                return res.json().then((res) => {
-                    setToxicModal(true)
-                })
-            }
->>>>>>> b004859 (Initialize for deployment)
         })
       }
     })
@@ -175,118 +100,7 @@ function UpdateProduct() {
       setPreviewImage('')
       setFormData({ ...formData, image: '' })
     }
-<<<<<<< HEAD
   }
-=======
-    if (!userId) {
-        return <p>Loading...</p>
-    }
-    return (
-        <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6 sm:py-6 lg:max-w-7xl lg:px-8">
-            <h1 className="text-xl font-semibold text-indigo-600">
-                Create Product
-            </h1>
-            <form className="space-y-5">
-                <div className="">
-                    <label
-                        htmlFor="name"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                        Name
-                    </label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={name}
-                        onChange={onChange}
-                        id="name"
-                        autoComplete="name"
-                        className="input-field"
-                        placeholder="e.g. 2023 Spring ECE 105 Textbook"
-                    />
-                </div>
-                <div className="">
-                    <label
-                        htmlFor="description"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                        Description
-                    </label>
-                    <div className="">
-                        <textarea
-                            id="description"
-                            name="description"
-                            value={description}
-                            onChange={onChange}
-                            rows={3}
-                            className="input-field"
-                        />
-                    </div>
-                </div>
-                <div className="">
-                    <label
-                        htmlFor="photo"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                        Photo
-                    </label>
-                    <div className="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                        <div className="text-center">
-                            {previewImage ? (
-                                <>
-                                    <div className="mt-6">
-                                        <Image
-                                            className="mt-6"
-                                            width="300"
-                                            src={previewImage}
-                                            alt="Preview"
-                                        />
-                                    </div>
-                                    <button
-                                        onClick={() => {
-                                            setFormData({
-                                                ...formData,
-                                                image: '',
-                                            })
-                                            setPreviewImage('')
-                                        }}
-                                        className="mt-10 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                    >
-                                        Reset Image
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <PhotoIcon
-                                        className="mx-auto h-12 w-12 text-gray-300"
-                                        aria-hidden="true"
-                                    />
-                                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                        <label
-                                            htmlFor="image"
-                                            className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                        >
-                                            <span>Upload a file</span>
-                                            <input
-                                                id="image"
-                                                name="image"
-                                                value={image}
-                                                onChange={handleImageChange}
-                                                type="file"
-                                                className="sr-only"
-                                            />
-                                        </label>
-                                        <p className="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p className="text-xs leading-5 text-gray-600">
-                                        PNG, JPEG up to 10MB
-                                    </p>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </div>
->>>>>>> b004859 (Initialize for deployment)
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6 sm:py-6 lg:max-w-7xl lg:px-8">
@@ -340,7 +154,7 @@ function UpdateProduct() {
               {previewImage ? (
                 <>
                   <div className="mt-6">
-                    <img
+                    <Image
                       className="mt-6"
                       width="300"
                       src={previewImage}

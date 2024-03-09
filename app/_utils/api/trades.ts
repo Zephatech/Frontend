@@ -5,7 +5,7 @@ import { BACKEND_URL } from '../../constants/backend'
 
 export const createTrade = async (productId: number) => {
   console.log('HERE with', productId)
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/trade`, {
+  const res = await fetch(`${BACKEND_URL}/trade`, {
     method: 'POST',
     body: JSON.stringify({ productId }),
     headers: {
@@ -16,16 +16,13 @@ export const createTrade = async (productId: number) => {
   return attachStatus(res)
 }
 export const getTrades = async () => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/trade/getAllTrades`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    }
-  )
+  const res = await fetch(`${BACKEND_URL}/trade/getAllTrades`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  })
   return attachStatus(res)
 }
 
@@ -65,44 +62,35 @@ export const getStatus = (trade: Trade) => {
 }
 
 export const cancelTrade = async (tradeId: number) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/trade/${tradeId}/cancel`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    }
-  )
+  const res = await fetch(`${BACKEND_URL}/trade/${tradeId}/cancel`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  })
   return attachStatus(res)
 }
 
 export const endTrade = async (tradeId: number) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/trade/${tradeId}/end`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    }
-  )
+  const res = await fetch(`${BACKEND_URL}/trade/${tradeId}/end`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  })
   return attachStatus(res)
 }
 
 export const confirmTrade = async (trade: Trade, sell: Trade[]) => {
-  let res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/trade/${trade.id}/confirm`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    }
-  )
+  let res = await fetch(`${BACKEND_URL}/trade/${trade.id}/confirm`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  })
   const confirmRet = attachStatus(res)
   const confirmData = await confirmRet
   if (!confirmData.success) {
@@ -111,16 +99,13 @@ export const confirmTrade = async (trade: Trade, sell: Trade[]) => {
   let data
   for (const sellTrade of sell) {
     if (sellTrade.product.id === trade.product.id && trade.id != sellTrade.id) {
-      res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/trade/${sellTrade.id}/cancel`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        }
-      )
+      res = await fetch(`${BACKEND_URL}/trade/${sellTrade.id}/cancel`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      })
       let data = await attachStatus(res)
       if (!data.success) {
         return attachStatus(res)
