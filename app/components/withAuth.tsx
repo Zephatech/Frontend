@@ -14,9 +14,10 @@ const withAuth = <P extends object>(
       }
     }, [isLoading])
 
-    if (isLoading) {
+    if (isLoading || !isValidUser) {
       return null
     }
+
     return <WrappedComponent {...props} />
   }
 
