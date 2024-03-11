@@ -57,6 +57,7 @@ function ContactInfoCard({
                 <div> Email: {profile?.email}</div>
                 <div> Phone: {profile?.phoneNumber}</div>
                 <div> Facebook: {profile?.Facebook} </div>
+                <div> Bio: {profile?.bio} </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -167,7 +168,8 @@ export default function Page({ params }: { params: { id: number } }) {
   const [loading, setLoading] = useState<boolean>(true)
   const [contactCardIsOpen, setContactCardIsOpen] = useState(false)
   const [messageCardIsOpen, setMessageCardIsOpen] = useState(false)
-  const { isValidUser } = useAuthStore()
+  const [similarItems, setSimilarItems] = useState<Product[]>([])
+  const { isValidUser, userId } = useAuthStore()
 
   useEffect(() => {
     const getProductData = async (id: number) => {
@@ -181,6 +183,16 @@ export default function Page({ params }: { params: { id: number } }) {
         const data = await res.json()
         setProduct(data)
 
+        const res2 = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/products/getSimilarProducts/${id}`,
+          {
+            cache: 'no-cache',
+          }
+        )
+        const similarProducts = await res2.json()
+        setSimilarItems(similarProducts)
+
+        console.log('data.ownerId:', data.ownerId)
         if (isValidUser && data.ownerId != null) {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/profile/getOtherUserProfile/${data.ownerId}`,
@@ -206,7 +218,6 @@ export default function Page({ params }: { params: { id: number } }) {
     return <div className="text-center py-10">Loading...</div>
   }
 
-  const similarItems = [product, product, product] // @TODO: get similar items from backend (Hubert)
   const showCourseLink = product?.options !== null && product?.options?.course
 
   return (
@@ -301,13 +312,15 @@ export default function Page({ params }: { params: { id: number } }) {
               )}
 
               {/* Always visible button */}
-              <button
-                type="button"
-                onClick={() => setMessageCardIsOpen(true)}
-                className="w-full items-center justify-center px-6 py-3 bg-blue-600 text-white text-lg leading-6 font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150"
-              >
-                Send message to seller
-              </button>
+              {userId != undefined && product?.ownerId != parseInt(userId) ? (
+                <button
+                  type="button"
+                  onClick={() => setMessageCardIsOpen(true)}
+                  className="w-full items-center justify-center px-6 py-3 bg-blue-600 text-white text-lg leading-6 font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150"
+                >
+                  Send message to seller
+                </button>
+              ) : null}
 
               {/* Additional elements like AskToBuy */}
               <AskToBuy ownerId={product?.ownerId} productId={product?.id} />
@@ -337,6 +350,7 @@ export default function Page({ params }: { params: { id: number } }) {
                       <div
                         key={index}
                         className="flex-none w-1/2 md:w-1/4 lg:w-1/5"
+                        onClick={() => router.push(`/products/${item.id}`)}
                       >
                         <img
                           src={
