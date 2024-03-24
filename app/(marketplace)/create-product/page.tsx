@@ -106,7 +106,7 @@ function CreateProduct() {
     ) {
       setPreviewImage(URL.createObjectURL(file))
       setFormData({ ...formData, image: file })
-      setAutoDescriptorQuestionModal(true)
+      // setAutoDescriptorQuestionModal(true)
     } else {
       toast.warning('File not supported')
       setPreviewImage('')
