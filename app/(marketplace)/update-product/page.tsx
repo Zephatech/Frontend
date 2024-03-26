@@ -7,12 +7,13 @@ import { useRouter } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import WithAuth from '../../components/withAuth'
+import ImageUpload from '../components/ImageUpload'
 
 function UpdateProduct() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const productId = searchParams.get('id')
-  const [previewImage, setPreviewImage] = useState('')
+  const [image, setImage] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -39,9 +40,9 @@ function UpdateProduct() {
         category: res.category,
         image: res.image,
       })
-      if (res.image) {
-        setPreviewImage(`images/${res.image}`)
-      }
+      // if (res.image) {
+      //   setPreviewImage(`images/${res.image}`)
+      // }
     }
     getProduct()
   }, [])
@@ -49,7 +50,7 @@ function UpdateProduct() {
   const queryClient = useQueryClient()
   const [toxicModal, setToxicModal] = useState(false)
 
-  const { name, description, price, category, image } = formData
+  const { name, description, price, category } = formData
 
   const onChange = (e: any) =>
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -58,9 +59,7 @@ function UpdateProduct() {
     e.preventDefault()
     const formDataToSend = new FormData()
 
-    if (formData.image) {
-      formDataToSend.append('image', formData.image)
-    }
+    formDataToSend.append('image', image)
     formDataToSend.append('name', formData.name)
     formDataToSend.append('price', formData.price.toString())
     formDataToSend.append('description', formData.description)
@@ -87,27 +86,27 @@ function UpdateProduct() {
       }
     })
   }
-  const handleImageChange = (e: any) => {
-    const file = e.target.files[0]
-    const maxSize = 10 * 1024 * 1024 // 10MB in bytes
+  // const handleImageChange = (e: any) => {
+  //   const file = e.target.files[0]
+  //   const maxSize = 10 * 1024 * 1024 // 10MB in bytes
 
-    if (
-      file &&
-      (file.type === 'image/png' || file.type === 'image/jpeg') &&
-      file.size <= maxSize
-    ) {
-      setPreviewImage(URL.createObjectURL(file))
-      setFormData({ ...formData, image: file })
-    } else {
-      toast.warning('File not supported')
-      setPreviewImage('')
-      setFormData({ ...formData, image: '' })
-    }
-  }
+  //   if (
+  //     file &&
+  //     (file.type === 'image/png' || file.type === 'image/jpeg') &&
+  //     file.size <= maxSize
+  //   ) {
+  //     setPreviewImage(URL.createObjectURL(file))
+  //     setFormData({ ...formData, image: file })
+  //   } else {
+  //     toast.warning('File not supported')
+  //     setPreviewImage('')
+  //     setFormData({ ...formData, image: '' })
+  //   }
+  // }
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6 sm:py-6 lg:max-w-7xl lg:px-8">
-      <h1 className="text-xl font-semibold text-indigo-600">Create Product</h1>
+      <h1 className="text-xl font-semibold text-indigo-600">Update Product</h1>
       <form className="space-y-5">
         <div className="">
           <label
@@ -152,7 +151,12 @@ function UpdateProduct() {
           >
             Photo
           </label>
-          <div className="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+          <ImageUpload
+            setImage={(file: any) => {
+              setImage(file)
+            }}
+          />
+          {/* <div className="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
             <div className="text-center">
               {previewImage ? (
                 <>
@@ -206,7 +210,7 @@ function UpdateProduct() {
                 </>
               )}
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="">

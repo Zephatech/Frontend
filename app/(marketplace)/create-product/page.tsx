@@ -13,6 +13,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { ScaleLoader } from 'react-spinners'
 import useAuthStore from '@/app/stores/authStore'
 import WithAuth from '@/app/components/withAuth'
+import ImageUpload from '../components/ImageUpload'
 
 function CreateProduct() {
   const queryClient = useQueryClient()
@@ -21,18 +22,18 @@ function CreateProduct() {
   const [autoDescriptorQuestionModal, setAutoDescriptorQuestionModal] =
     useState(false)
   const [autoDescriptorModal, setAutoDescriptorModal] = useState(false)
-  const [previewImage, setPreviewImage] = useState('')
+  // const [previewImage, setPreviewImage] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     price: 0,
     category: 'Textbook',
-    image: '',
     course: '',
   })
+  const [image, setImage] = useState('')
   const { userId } = useAuthStore()
 
-  const { name, description, price, category, image, course } = formData
+  const { name, description, price, category, course } = formData
 
   const onChange = (e: any) =>
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -55,9 +56,7 @@ function CreateProduct() {
     e.preventDefault()
     const formDataToSend = new FormData()
 
-    if (formData.image) {
-      formDataToSend.append('image', formData.image)
-    }
+    formDataToSend.append('image', image)
     formDataToSend.append('name', formData.name)
     formDataToSend.append('price', formData.price.toString())
     formDataToSend.append('description', formData.description)
@@ -95,24 +94,26 @@ function CreateProduct() {
       }
     })
   }
-  const handleImageChange = (e: any) => {
-    const file = e.target.files[0]
-    const maxSize = 10 * 1024 * 1024 // 10MB in bytes
 
-    if (
-      file &&
-      (file.type === 'image/png' || file.type === 'image/jpeg') &&
-      file.size <= maxSize
-    ) {
-      setPreviewImage(URL.createObjectURL(file))
-      setFormData({ ...formData, image: file })
-      // setAutoDescriptorQuestionModal(true)
-    } else {
-      toast.warning('File not supported')
-      setPreviewImage('')
-      setFormData({ ...formData, image: '' })
-    }
-  }
+  // const handleImageChange = (e: any) => {
+  //   const file = e.target.files[0]
+  //   const maxSize = 10 * 1024 * 1024 // 10MB in bytes
+
+  //   if (
+  //     file &&
+  //     (file.type === 'image/png' || file.type === 'image/jpeg') &&
+  //     file.size <= maxSize
+  //   ) {
+  //     setPreviewImage(URL.createObjectURL(file))
+  //     setFormData({ ...formData, image: file })
+  //     // setAutoDescriptorQuestionModal(true)
+  //   } else {
+  //     toast.warning('File not supported')
+  //     setPreviewImage('')
+  //     setFormData({ ...formData, image: '' })
+  //   }
+  // }
+
   if (!userId) {
     return <p>Loading...</p>
   }
@@ -157,6 +158,20 @@ function CreateProduct() {
           </div>
         </div>
         <div className="">
+          <label
+            htmlFor="photo"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
+            {' '}
+            Photo{' '}
+          </label>
+          <ImageUpload
+            setImage={(file: any) => {
+              setImage(file)
+            }}
+          />
+        </div>
+        {/* <div className="">
           <label
             htmlFor="photo"
             className="block text-sm font-medium leading-6 text-gray-900"
@@ -218,7 +233,7 @@ function CreateProduct() {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="">
           <label
