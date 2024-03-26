@@ -74,7 +74,7 @@ export default function Register() {
         <h1 className="text-xl text-indigo-600 font-semibold text-center">
           Register your account
         </h1>
-        <div className="w-[25rem] mt-7">
+        <div className="mt-7 w-4/5 max-w-[400px]">
           <form
             className="space-y-5"
             onSubmit={handleSubmit(onSubmit, onError)}
