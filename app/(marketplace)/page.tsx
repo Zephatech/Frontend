@@ -64,7 +64,7 @@ export default function Page() {
                       src={
                         product.image === ''
                           ? 'https://png.pngtree.com/png-vector/20190820/ourmid/pngtree-no-image-vector-illustration-isolated-png-image_1694547.jpg'
-                          : `/images/${product.image}`
+                          : `${product.image}`
                       }
                       alt={product.name}
                       className="h-full w-full object-cover object-center sm:h-full sm:w-full"
