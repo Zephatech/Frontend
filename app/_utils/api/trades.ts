@@ -2,7 +2,6 @@ import { attachStatus } from '.'
 import { Product } from './products'
 
 export const createTrade = async (productId: number) => {
-  console.log('HERE with', productId)
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_PREFIX}/trade`, {
     method: 'POST',
     body: JSON.stringify({ productId }),

@@ -40,7 +40,6 @@ const MyListings = () => {
 
   const handleDelete = async (id: number) => {
     const response = await deleteProduct(id)
-    console.log(response)
     if (response.success) {
       setSellListings((prevListings) =>
         prevListings.filter((listing) => listing.id !== id)

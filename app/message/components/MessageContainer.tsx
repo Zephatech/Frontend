@@ -60,7 +60,6 @@ const useSendMessage = () => {
       return
     }
 
-    console.log(selectedConversation)
     setLoading(true)
     try {
       const res = await fetch(

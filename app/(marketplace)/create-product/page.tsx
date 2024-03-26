@@ -480,7 +480,6 @@ function CreateProduct() {
           as="div"
           className="relative z-50"
           onClose={() => {
-            console.log('here')
             // setAutoDescriptorModal(false)
           }}
         >
