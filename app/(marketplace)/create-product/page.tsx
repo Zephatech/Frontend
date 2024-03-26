@@ -452,9 +452,9 @@ function CreateProduct() {
                       onClick={() => {
                         setAutoDescriptorQuestionModal(false)
                         setAutoDescriptorModal(true)
-                        mutation.mutate({
-                          image: formData.image,
-                        })
+                        // mutation.mutate({
+                        //   image: formData.image,
+                        // })
                       }}
                     >
                       Yes
