@@ -89,7 +89,6 @@ export const useAuth = () => {
 }
 
 export const requestResetPassword = async (email: string) => {
-  console.log(email)
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/auth/requestResetPassword`,
     {

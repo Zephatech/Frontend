@@ -192,7 +192,6 @@ export default function Page({ params }: { params: { id: number } }) {
         const similarProducts = await res2.json()
         setSimilarItems(similarProducts)
 
-        console.log('data.ownerId:', data.ownerId)
         if (isValidUser && data.ownerId != null) {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL_PREFIX}/profile/getOtherUserProfile/${data.ownerId}`,

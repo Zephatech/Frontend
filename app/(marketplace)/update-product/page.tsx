@@ -76,7 +76,6 @@ function UpdateProduct() {
       if (res.status == 200) {
         toast.success('Updated')
         const data = await res.json()
-        console.log(data)
         router.replace('/')
         queryClient.invalidateQueries({ queryKey: ['products'] })
       } else {

@@ -76,7 +76,9 @@ export default function Page() {
                     <span aria-hidden="true" />
                     {product.name}
                   </h3>
-                  <p className="text-sm text-gray-500">{product.description}</p>
+                  <p className="text-sm text-gray-500 overflow-hidden max-h-16">
+                    {product.description}
+                  </p>
                   <div className="flex flex-1 flex-row items-center justify-between ">
                     <p className="text-base font-medium text-gray-900">
                       {product.price}
