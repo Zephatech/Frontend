@@ -233,7 +233,7 @@ export default function Page({ params }: { params: { id: number } }) {
         ownerId={product?.ownerId}
       />
       <div className="bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:px-8">
           {/* Image container moved to the left side */}
           <div className="lg:col-start-1 lg:self-center">
             <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg bg-gray-200">
@@ -337,21 +337,23 @@ export default function Page({ params }: { params: { id: number } }) {
               </div>
             </div>
           </div>
-          <div className="container mx-auto px-4">
-            {/* Similar Items Section */}
-            <div className="my-8">
-              <h2 className="text-2xl font-bold">
-                Similar items inspired by your views
-              </h2>
-              <div className="flex overflow-x-auto py-4 -mx-4">
-                <div className="flex-none min-w-full px-4">
-                  <div className="flex space-x-6">
-                    {similarItems.map((item, index) => (
-                      <div
-                        key={index}
-                        className="flex-none w-1/2 md:w-1/4 lg:w-1/5"
-                        onClick={() => router.push(`/products/${item.id}`)}
-                      >
+        </div>
+        <div className="container mx-auto px-4">
+          {/* Similar Items Section */}
+          <div className="my-8">
+            <h2 className="text-2xl font-bold">
+              Similar items inspired by your views
+            </h2>
+            <div className="flex overflow-x-auto py-4 -mx-4 scrollbar-container">
+              <div className="flex-none min-w-full px-4">
+                <div className="flex space-x-6">
+                  {similarItems.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex-none w-1/2 md:w-1/4 lg:w-1/5"
+                      onClick={() => router.push(`/products/${item.id}`)}
+                    >
+                      <div className="aspect-w-2 aspect-h-2 overflow-hidden rounded-lg">
                         <img
                           src={
                             item?.image === ''
@@ -359,17 +361,17 @@ export default function Page({ params }: { params: { id: number } }) {
                               : `${item?.image}`
                           }
                           alt={item?.name || 'No image'}
-                          className="w-full h-auto object-cover rounded-lg"
+                          className="w-full h-full object-cover rounded-lg"
                         />
-                        <h3 className="mt-2 text-lg font-medium">
-                          {item?.name || 'Product Name'}
-                        </h3>
-                        <p className="text-lg font-semibold">
-                          ${item?.price || '100'}
-                        </p>
                       </div>
-                    ))}
-                  </div>
+                      <h3 className="text-lg font-medium">
+                        {item?.name || 'Product Name'}
+                      </h3>
+                      <p className="text-md font-semibold">
+                        ${item?.price || '100'}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -382,11 +384,16 @@ export default function Page({ params }: { params: { id: number } }) {
           -webkit-overflow-scrolling: touch;
         }
         .overflow-x-auto::-webkit-scrollbar {
-          display: none; /* for macOS */
+          display:; /* for macOS */
         }
         .overflow-x-auto {
           scrollbar-width: none; /* for Firefox */
           ms-overflow-style: none; /* for Internet Explorer and Edge */
+        }
+        .scrollbar-container {
+          overflow-x: auto;
+          scrollbar-width: thin; /* Firefox支持的滚动条宽度 */
+          scrollbar-color: rgba(155, 155, 155, 0.5) rgba(255, 255, 255, 0.1); /* Firefox支持的滚动条颜色 */
         }
       `}</style>
     </>

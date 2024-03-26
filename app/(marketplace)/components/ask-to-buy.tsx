@@ -44,7 +44,7 @@ export default function AskToBuy({
         <button
           type="button"
           onClick={() => mutation.mutate({ productId })}
-          className="flex w-full items-center justify-center primary-btn"
+          className="w-full items-center justify-center px-6 py-3 bg-blue-600 text-white text-lg leading-6 font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150"
         >
           Ask to Buy
         </button>
